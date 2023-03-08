@@ -23,6 +23,16 @@ form {
     font-style: italic;
   }
   
+  .input-error {
+    border: 2px solid red;
+  }
+  
+  .error-message {
+    color: red;
+    font-size: 0.8rem;
+  }
+  
+
   select {
     padding: 10px;
     margin: 10px;
