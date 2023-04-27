@@ -126,6 +126,11 @@ function AdminCreateEvent() {
       return regex.test(valor);
     }
     
+    function validateAddress(valor) {
+      const regex = /^[a-zA-Z0-9\s, 'À-ÿ\/-]*$/;
+      return regex.test(valor);
+    }
+    
     function validateForm() {
       let error_msgs = {};
 
@@ -157,6 +162,8 @@ function AdminCreateEvent() {
         error_msgs.street = "La calle no puede estar vacía";
       } else if (street.length >= 255){
         error_msgs.street = "La calle no puede tener más de 255 caracteres";
+      } else if (!validateAddress(street)){
+        error_msgs.street = "La calle no puede contener caracteres especiales";
       } else if (!isAntispam(street)){
         error_msgs.street = "La calle no puede contener palabras prohibidas";
       }

@@ -78,6 +78,11 @@ function AdminCreateNotification() {
     if (message === "" || message === null) {
       error_msgs.message = "El mensaje no puede estar vacío";
     }
+
+    if (subject === "" || subject === null) {
+      error_msgs.subject = "El asunto no puede estar vacío";
+    }
+    
     setErrors(error_msgs);
 
     return Object.keys(error_msgs).length === 0;
@@ -148,7 +153,7 @@ function AdminCreateNotification() {
                   name="subject"
                   placeholder="Asunto"
                 />
-                {errors.name && <p className="text-danger">{errors.name}</p>}
+                {errors.subject && <p className="text-danger">{errors.subject}</p>}
               </Form.Group>
 
               <Form.Group className="mb-3">

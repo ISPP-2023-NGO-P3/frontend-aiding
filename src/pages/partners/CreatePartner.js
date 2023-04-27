@@ -94,12 +94,12 @@ function CreatePartner() {
   }
 
   function validateTelefone(valor) {
-    const regex = /^(\+34|0034|34)?[ -]*(6|7)[ -]*([0-9][ -]*){8}$/;
+    const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
     return regex.test(valor);
   }
 
-  function validateAdress(valor) {
-    const regex = /^[a-zA-Z0-9\s, '-]*$/;
+  function validateAddress(valor) {
+    const regex = /^[a-zA-Z0-9\s, 'À-ÿ\/-]*$/;
     return regex.test(valor);
   }
 
@@ -151,7 +151,7 @@ function CreatePartner() {
 
     if (address === "" || address === null) {
       error_msgs.address = "La dirección no puede estar vacía";
-    } else if(!validateAdress(address)){
+    } else if(!validateAddress(address)){
       error_msgs.address = "La dirección no puede contener caracteres especiales";
     } else if (!isAntispam(address)) {
       error_msgs.address = "La dirección no puede contener palabras prohibidas";

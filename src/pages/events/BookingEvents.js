@@ -58,7 +58,7 @@ function BookingEvents() {
   }
 
   function validateTelefone(valor) {
-    const regex = /^(\+34|0034|34)?[ -]*(6|7)[ -]*([0-9][ -]*){8}$/;
+    const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
     return regex.test(valor);
   }
 

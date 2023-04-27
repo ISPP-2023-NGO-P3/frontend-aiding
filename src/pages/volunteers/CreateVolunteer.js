@@ -77,7 +77,7 @@ function CreateVolunteer() {
   }
 
   function validateTelefone(valor) {
-    const regex = /^(\+34|0034|34)?[ -]*(6|7)[ -]*([0-9][ -]*){8}$/;
+    const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
     return regex.test(valor);
   }
 
@@ -100,7 +100,7 @@ function CreateVolunteer() {
       error_msgs.last_name="Los apellidos no pueden contener palabras prohibidas";
     }
 
-    if ( nif === "" || nif === null) {
+    if (nif === "" || nif === null) {
       error_msgs.nif = "El NIF no puede estar vacío";
     } else if (!validateNIF(nif)) {
       error_msgs.nif = "Este no es un NIF válido";
