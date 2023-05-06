@@ -74,10 +74,14 @@ export default function CreateUser() {
       error_msgs.username = "El nombre de usuario no puede estar vacío";
     } else if (!isAntispam(username)) {
       error_msgs.username = "El nombre de usuario no puede contener palabras prohibidas";
+    } else if(username.length > 100) {
+      error_msgs.username = "El nombre de usuario no puede contener más de 100 caracteres";
     }
 
     if (password === "" || password === null) {
       error_msgs.password = "La contraseña no puede estar vacía";
+    } else if (password.length > 100) {
+      error_msgs.password = "La contraseña no puede contener más de 100 caracteres";
     }
 
     setErrors(error_msgs);
