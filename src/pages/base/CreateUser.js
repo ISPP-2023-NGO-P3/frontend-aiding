@@ -59,7 +59,7 @@ export default function CreateUser() {
       formData.append("username", username);
       formData.append("password", password);
       formData.append("roles_id", roles_id);
-
+      formData.append("is_admin", is_admin ? 1 : 0);
       postUser(formData);
     }
   };
