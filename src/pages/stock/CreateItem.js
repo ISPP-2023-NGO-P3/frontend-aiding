@@ -179,7 +179,7 @@ function CreateItem() {
               <p className="text-danger">{errors.quantity}</p>
             )}
             <Form.Group className="mb-3">
-              <Form.Label>Tipos</Form.Label>
+              <Form.Label>Tipo</Form.Label>
               <Form.Select
                 onChange={(e) => onInputChange(e)}
                 value={type_id}

@@ -183,14 +183,7 @@ const Items = () => {
 
   /* Data */
   const [event, setEvent] = React.useState(true);
-  const [items_data, setItemsData] = React.useState([
-    {
-      name: "...",
-      quantity: "...",
-      description: "...",
-      type: "...",
-    },
-  ]);
+  const [items_data, setItemsData] = React.useState([]);
 
   const [types, setTypes] = React.useState([
     {
