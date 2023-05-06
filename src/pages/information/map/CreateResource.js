@@ -88,6 +88,11 @@ export default function CreateResource() {
     return regex.test(valor);
   }
 
+  function validarCampoNumerico(valor) {
+    const regex = /^[0-9]*$/;
+    return regex.test(valor);
+  }
+
    function validateForm() {
      let error_msgs = {};
  
@@ -127,6 +132,8 @@ export default function CreateResource() {
 
     if (number.length > 10) {
       error_msgs.number = "El número no puede tener más de 10 caracteres";
+    } else if (!validarCampoNumerico(number)) {
+      error_msgs.number = "El número no puede contener letras ni caracteres especiales y no debe de ser negativo";
     }
 
     if (city === "" || city === null) {

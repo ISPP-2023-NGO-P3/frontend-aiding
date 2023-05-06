@@ -96,10 +96,14 @@ export default function UpdateResource() {
     const regex = /^[a-zA-Z0-9\s, 'À-ÿ\/-]*$/;
     return regex.test(valor);
   }
+
+  function validarCampoNumerico(valor) {
+    const regex = /^[0-9]*$/;
+    return regex.test(valor);
+  }
   
   function validateForm() {
      let error_msgs = {};
- 
  
      if (title === "" || title === null) {
       error_msgs.title = "El título no puede estar vacío";
@@ -137,6 +141,8 @@ export default function UpdateResource() {
 
     if (number.length > 10) {
       error_msgs.number = "El número no puede tener más de 10 caracteres";
+    } else if (!validarCampoNumerico(number)) {
+      error_msgs.number = "El número no puede contener letras ni caracteres especiales y no debe de ser negativo";
     }
 
     if (city === "" || city === null) {
@@ -235,6 +241,9 @@ export default function UpdateResource() {
                   placeholder="Número de la calle"
                 />
               </Form.Group>
+                {errors.number && (
+                  <p className="text-danger">{errors.number}</p>
+                )}
 
               <Form.Group className="mb-3">
                 <Form.Label>Ciudad</Form.Label>
