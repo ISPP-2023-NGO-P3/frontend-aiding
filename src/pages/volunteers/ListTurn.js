@@ -141,15 +141,7 @@ const Turns = () => {
   ];
 
   /*DATOS*/
-  const [turns_data, setTurnsData] = React.useState([
-    {
-      title: '...',
-      date: '...',
-      start: '...',
-      end: '...',
-      draft: '...',
-    }
-  ]);
+  const [turns_data, setTurnsData] = React.useState([]);
 
   useEffect(() => {
     volunteers.get("turns/").then((response) => {setTurnsData(response.data);});

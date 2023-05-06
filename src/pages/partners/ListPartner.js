@@ -328,12 +328,13 @@ const Partners = () => {
         <Button onClick={handleShow} id="boton-importar">
           Importar socios
         </Button>
-        <Button id="boton-importar" onClick={() => exportToExcel("myTable")}>
-          Exportar a Excel
-        </Button>
-        <Button id="boton-importar" onClick={() => notifyPartners()}>
-          Notificar socios seleccionados
-        </Button>
+        {partners_data.length > 0 && (
+        <><Button id="boton-importar" onClick={() => exportToExcel("myTable")}>
+            Exportar a Excel
+          </Button><Button id="boton-importar" onClick={() => notifyPartners()}>
+              Notificar socios seleccionados
+            </Button></>
+        )}
       </div>
 
       <Modal show={show} onHide={handleClose}>

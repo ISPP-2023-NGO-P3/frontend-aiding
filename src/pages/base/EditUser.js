@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { base, rolesBE } from "./services/backend.js";
-import swal from 'sweetalert';
+import swal from "sweetalert";
 import { isAntispam } from "../../components/AntiSpam.js";
 
 const successMsg = {
@@ -12,7 +12,7 @@ const successMsg = {
   icon: "success",
   button: "Aceptar",
   timer: "5000",
-}
+};
 
 const errorMsg = {
   title: "Mensaje de error",
@@ -20,7 +20,15 @@ const errorMsg = {
   icon: "error",
   button: "Aceptar",
   timer: "5000",
-}
+};
+
+const incorrectPasswordMsg = {
+  title: "La contraseña introducida no es correcta",
+  text: "Por favor introduzca la contraseña actual del usuario para poder modificarlo",
+  icon: "error",
+  button: "Aceptar",
+  timer: "5000",
+};
 
 export default function EditUser() {
   const { id } = useParams();
@@ -80,15 +88,18 @@ export default function EditUser() {
     if (username === "" || username === null) {
       error_msgs.username = "El nombre de usuario no puede estar vacío";
     } else if (!isAntispam(username)) {
-      error_msgs.username = "El nombre de usuario no puede contener palabras prohibidas";
-    } else if(username.length > 100) {
-      error_msgs.username = "El nombre de usuario no puede contener más de 100 caracteres";
+      error_msgs.username =
+        "El nombre de usuario no puede contener palabras prohibidas";
+    } else if (username.length > 100) {
+      error_msgs.username =
+        "El nombre de usuario no puede contener más de 100 caracteres";
     }
 
     if (password === "" || password === null) {
       error_msgs.password = "La contraseña no puede estar vacía";
     } else if (password.length > 100) {
-      error_msgs.password = "La contraseña no puede contener más de 100 caracteres";
+      error_msgs.password =
+        "La contraseña no puede contener más de 100 caracteres";
     }
 
     setErrors(error_msgs);
@@ -103,11 +114,18 @@ export default function EditUser() {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      await base.put(`/users/${id}`, user);
-      swal(successMsg);
-      navigate("/admin/base/users");
+      await base
+        .put(`/users/${id}`, user)
+        .then((res) => {
+          swal(successMsg);
+          navigate("/admin/base/users");
+        })
+        .catch((error) => {
+          if (error.response.status === 404) {
+            swal(incorrectPasswordMsg);
+          }
+        });
     }
-
   };
 
   return (
@@ -128,8 +146,8 @@ export default function EditUser() {
             </Form.Group>
 
             {errors.username && (
-                    <p className="text-danger">{errors.username}</p>
-                  )}
+              <p className="text-danger">{errors.username}</p>
+            )}
 
             <Form.Group className="mb-12">
               <Form.Label>Contraseña actual</Form.Label>
@@ -152,20 +170,20 @@ export default function EditUser() {
             </Form.Group>
 
             {errors.password && (
-                    <p className="text-danger">{errors.password}</p>
-                  )}
+              <p className="text-danger">{errors.password}</p>
+            )}
 
-              <Form.Group className="mb-12">
-                <Form.Label>Administrador</Form.Label>
-                <Form.Check
-                  type="switch"
-                  id="custom-switch"
-                  name="is_admin"
-                  checked={is_admin}
-                  onChange={(e) => onInputChange(e)}
-                />
-              </Form.Group>
-              <Form.Group className="mb-3">
+            <Form.Group className="mb-12">
+              <Form.Label>Administrador</Form.Label>
+              <Form.Check
+                type="switch"
+                id="custom-switch"
+                name="is_admin"
+                checked={is_admin}
+                onChange={(e) => onInputChange(e)}
+              />
+            </Form.Group>
+            <Form.Group className="mb-3">
               <Form.Label>Roles</Form.Label>
               <Form.Select
                 onChange={(e) => onInputChange(e)}
@@ -182,7 +200,11 @@ export default function EditUser() {
         </div>
 
         <div className="row justify-content-evenly">
-          <Button className="col mb-4 mx-2" variant="outline-success" type="submit">
+          <Button
+            className="col mb-4 mx-2"
+            variant="outline-success"
+            type="submit"
+          >
             Guardar cambios
           </Button>
           <Link
