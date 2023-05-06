@@ -142,7 +142,7 @@ function ShowEvent() {
                       </MapContainer>}
                     </MDBRow>
 
-                    {isAuthenticated && (
+                    {isAuthenticated && moment(event_data.start_date).isAfter(new Date())&& (
                       <MDBRow>
                         <MDBCol>
                           <MDBCardText className="text-muted w-auto">

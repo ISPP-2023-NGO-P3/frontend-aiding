@@ -168,9 +168,7 @@ function AdminCreateEvent() {
         error_msgs.street = "La calle no puede contener palabras prohibidas";
       }
 
-      if (number === "" || number === null) {
-        error_msgs.number = "El número no puede estar vacío";
-      } else if (number.length >= 10){
+      if (number.length >= 10){
         error_msgs.number = "El número no puede tener más de 10 caracteres";
       } else if (!validarCampoNumerico(number)){
         error_msgs.number = "El número debe ser un número";

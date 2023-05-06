@@ -188,7 +188,6 @@ const Contacts = () => {
     <div className="container my-5">
       <h1 className="pt-3">Mensajes</h1>
       <br></br>
-      {contact_data.length >= 1 ? (
         <Table
           id="table"
           onRow={(record, rowIndex) => {
@@ -204,9 +203,6 @@ const Contacts = () => {
           scroll={{ y: 400 }}
           pagination={{ pageSize: 20 }}
         />
-      ) : (
-        <p>No hay contactos</p>
-      )}
     </div>
   );
 };

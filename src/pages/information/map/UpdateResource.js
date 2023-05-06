@@ -135,12 +135,8 @@ export default function UpdateResource() {
       error_msgs.contact_phone = "Este no es un teléfono válido";
     }
 
-    if (number === "" || number === null) {
-      error_msgs.number = "El número no puede estar vacío";
-    } else if (number.length > 10) {
+    if (number.length > 10) {
       error_msgs.number = "El número no puede tener más de 10 caracteres";
-    } else if (number < 1) {
-      error_msgs.number = "El número no puede ser negativo";
     }
 
     if (city === "" || city === null) {

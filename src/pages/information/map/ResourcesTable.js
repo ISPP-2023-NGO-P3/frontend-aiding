@@ -190,17 +190,7 @@ const ResourcesTable = () => {
   ];
 
   /*DATOS*/
-  const [resources_data, setResourceData] = React.useState([
-    {
-      id: "...",
-      title: "...",
-      description: "...",
-      street: "...",
-      number: "...",
-      city: "...",
-      additional_comments: "...",
-    },
-  ]);
+  const [resources_data, setResourceData] = React.useState([]);
 
   useEffect(() => {
     resourcesApi.get().then((response) => {
