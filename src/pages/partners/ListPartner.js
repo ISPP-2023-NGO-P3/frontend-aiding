@@ -233,18 +233,7 @@ const Partners = () => {
   ];
 
   /*DATOS*/
-  const [partners_data, setPartnersData] = React.useState([
-    {
-      id: "...",
-      dni: "...",
-      name: "...",
-      last_name: "...",
-      email: "...",
-      state: "...",
-      language: "...",
-      province: "...",
-    },
-  ]);
+  const [partners_data, setPartnersData] = React.useState([]);
 
   useEffect(() => {
     partners.get().then((response) => {
