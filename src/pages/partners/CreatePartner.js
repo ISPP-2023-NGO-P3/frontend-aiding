@@ -84,12 +84,12 @@ function CreatePartner() {
   }
 
   function validateText(valor) {
-    const regex = /^[a-zA-Z]*$/;
+    const regex = /^[a-zA-ZÀ-ÿ]*$/;
     return regex.test(valor);
   }
   
   function validateName(valor) {
-    const regex = /^[a-zA-ZÀ-ÿ]+(([',. -][a-zA-ZÀ-ÿ ])?[a-zA-ZÀ-ÿ]*)*$/;
+    const regex = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ]+(([',. -][a-zA-ZñÑáéíóúÁÉÍÓÚ ])?[a-zA-ZñÑáéíóúÁÉÍÓÚ]*)*$/;
     return regex.test(valor);
   }
 
