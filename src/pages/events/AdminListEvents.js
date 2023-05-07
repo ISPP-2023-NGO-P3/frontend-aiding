@@ -178,21 +178,7 @@ const AdminListEvent = () => {
     ];
   
     /*DATOS*/
-    const [events_data, setEventData] = React.useState([
-      {
-        title: '...',
-        description: '...',
-        start_date: '...',
-        end_date: '...',
-        places: '...',
-        street: '...',
-        number: '...',
-        city: '...',
-        latitude: '...',
-        longitude: '...',
-        
-      },
-    ]);
+    const [events_data, setEventData] = React.useState([]);
   
     useEffect(() => {
       events.get().then((response) => {

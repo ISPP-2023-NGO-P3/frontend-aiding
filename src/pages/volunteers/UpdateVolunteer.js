@@ -118,18 +118,15 @@ function UpdateVolunteer() {
   }
 
   function validateNIF(nif) {
-    const dniRegex = /^([a-z]|[A-Z]|[0-9])[0-9]{7}([a-z]|[A-Z]|[0-9])$/;
-    const strRegex = /^[a-zA-Z]$/;
-    const first_caracter=nif.charAt(0);
-    if(!dniRegex.test(nif)){ //Check NIF and DNI
-      if(!strRegex.test(first_caracter)){//if DNI
-        const letters = "TRWAGMYFPDXBNJZSQVHLCKE";
-        const letterIndex = parseInt(nif.substring(0, 8),10) % 23;
-        const expectedLetter = letters.charAt(letterIndex);
-        const actualLetter = nif.charAt(8).toUpperCase();
-        return expectedLetter === actualLetter;
-      }
-    }return true;
+    const dniRegex = /^\d{8}[a-zA-Z]$/;
+    if (!dniRegex.test(nif)) {
+      return false;
+    }
+    const letters = "TRWAGMYFPDXBNJZSQVHLCKE";
+    const letterIndex = parseInt(nif.substring(0, 8),10) % 23;
+    const expectedLetter = letters.charAt(letterIndex);
+    const actualLetter = nif.charAt(8).toUpperCase();
+    return expectedLetter === actualLetter;
   }
 
 
@@ -144,7 +141,7 @@ function UpdateVolunteer() {
   }
 
   function validateTelefone(valor) {
-    const regex = /^(\+34|0034|34)?[ -]*(6|7)[ -]*([0-9][ -]*){8}$/;
+    const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
     return regex.test(valor);
   }
 
@@ -319,7 +316,7 @@ function UpdateVolunteer() {
                   placeholder="Código postal"
                 />
               </Form.Group>
-              {errors.place && (
+              {errors.postal_code && (
                   <p className="text-danger">{errors.postal_code}</p>
                 )}
             </div>

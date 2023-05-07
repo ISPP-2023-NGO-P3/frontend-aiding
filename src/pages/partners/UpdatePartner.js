@@ -145,27 +145,22 @@ function UpdatePartner() {
   }
 
   function validateText(valor) {
-    const regex = /^[a-zA-Z]*$/;
+    const regex = /^[a-zA-ZÀ-ÿ]*$/;
     return regex.test(valor);
   }
   
   function validateName(valor) {
-    const regex = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+    const regex = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ]+(([',. -][a-zA-ZñÑáéíóúÁÉÍÓÚ ])?[a-zA-ZñÑáéíóúÁÉÍÓÚ]*)*$/;
     return regex.test(valor);
   }
 
   function validateTelefone(valor) {
-    const regex = /^(\+34|0034|34)?[ -]*(6|7)[ -]*([0-9][ -]*){8}$/;
+    const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
     return regex.test(valor);
   }
 
   function validateAdress(valor) {
     const regex = /^[a-zA-Z0-9\s, '-]*$/;
-    return regex.test(valor);
-  }
-
-  function validateNumber(valor) {
-    const regex = /^[0-9]*$/;
     return regex.test(valor);
   }
 

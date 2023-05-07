@@ -24,22 +24,7 @@ import { Button } from "react-bootstrap";
 export default function ResourcesListEdit() {
   let navigate = useNavigate();
 
-  const [resources_data, setResourceData] = React.useState([
-    {
-      id: "...",
-      title: "",
-      description: "",
-      contact_phone: "",
-      street: "",
-      number: "",
-      city: "",
-      additional_comments: "",
-      latitude: "",
-      longitude: "",
-      resource_type: "",
-      position: "",
-    },
-  ]);
+  const [resources_data, setResourceData] = React.useState([]);
 
   useEffect(() => {
     resourcesApi.get().then((response) => {
@@ -112,7 +97,7 @@ export default function ResourcesListEdit() {
               </MDBCardBody>
             </MDBCard>
           </MDBCol>
-
+          {resources_data.length > 0 ? (
           <MDBCol lg="6">
             <MDBCard className="mb-4">
               <MDBCardBody>
@@ -162,6 +147,17 @@ export default function ResourcesListEdit() {
               </MDBCardBody>
             </MDBCard>
           </MDBCol>
+          ): (
+          <MDBCol lg="6">
+            <MDBCard className="mb-4">
+              <MDBCardBody>
+                <MDBRow>
+                  <h3>No hay recursos disponibles</h3>
+                </MDBRow>
+              </MDBCardBody>
+            </MDBCard>
+          </MDBCol>
+          )}
         </MDBRow>
       </MDBContainer>
     </section>
