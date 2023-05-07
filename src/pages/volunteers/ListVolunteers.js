@@ -189,16 +189,7 @@ const Volunteers = () => {
   ];
 
   /*DATOS*/
-  const [volunteers_data, setVolunteersData] = React.useState([
-    {
-      id: "...",
-      nif: "...",
-      name: "...",
-      last_name: "...",
-      email: "...",
-      state: "...",
-    },
-  ]);
+  const [volunteers_data, setVolunteersData] = React.useState([]);
 
   useEffect(() => {
     volunteers.get().then((response) => {
@@ -252,11 +243,13 @@ const Volunteers = () => {
       <Button onClick={clearFilters} id="boton-socio">
         Limpiar filtros
       </Button>
+      {volunteers_data.length > 0 && (
       <Col md="auto">
           <Button id="boton-importar" onClick={() => notifyVol()}>
             Notificar voluntarios seleccionados
           </Button>
         </Col>
+      )}
       <Table
         id="table"
         onRow={(record, rowIndex) => {

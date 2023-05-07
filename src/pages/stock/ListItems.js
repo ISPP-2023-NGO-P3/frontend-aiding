@@ -183,14 +183,7 @@ const Items = () => {
 
   /* Data */
   const [event, setEvent] = React.useState(true);
-  const [items_data, setItemsData] = React.useState([
-    {
-      name: "...",
-      quantity: "...",
-      description: "...",
-      type: "...",
-    },
-  ]);
+  const [items_data, setItemsData] = React.useState([]);
 
   const [types, setTypes] = React.useState([
     {
@@ -220,6 +213,8 @@ const Items = () => {
       error_msgs.name = "El nombre no puede estar vacío";
     } else if (!isAntispam(name)) {
       error_msgs.name = "El nombre no puede contener spam";
+    } else if(name.length > 100){
+      error_msgs.name = "El nombre no puede contener más de 100 caracteres";
     }
 
     setErrors(error_msgs);
