@@ -53,8 +53,18 @@ function CreateItem() {
     return regex.test(valor);
   }
 
+  function normalizeString(input) {
+    return input.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
   function validateForm() {
     let error_msgs = {};
+
+   itemsList.forEach((it) => {
+      if (normalizeString(it.name) === normalizeString(name)) {
+        error_msgs.name = "Ya existe un item con ese nombre";
+      }
+    });
 
     if (name === "" || name === null) {
       error_msgs.name = "El nombre no puede estar vacío";
@@ -78,6 +88,8 @@ function CreateItem() {
       error_msgs.quantity = "La cantidad no puede estar vacía";
     } else if (quantity < 0) {
       error_msgs.quantity = "La cantidad no puede ser negativa";
+    } else if(quantity > 1000000000){
+      error_msgs.quantity = "La cantidad no puede ser mayor a 1.000.000.000";
     }
 
     if (type_id === "" || type_id === null) {
@@ -108,6 +120,8 @@ function CreateItem() {
     },
   ]);
 
+  const [itemsList, setItemsList] = useState([]);
+
   function getTipos() {
     tiposBE
       .get("")
@@ -119,8 +133,16 @@ function CreateItem() {
       });
   }
 
+  function getItems() {
+    items.get("").then((response) => {
+      setItemsList(response.data);
+      console.log(response.data);
+    });
+  }
+
   useEffect(() => {
     getTipos();
+    getItems();
   }, []);
 
   const { name, description, quantity, type_id } = item;
@@ -170,7 +192,6 @@ function CreateItem() {
               <Form.Control
                 onChange={(e) => onInputChange(e)}
                 value={quantity}
-                type="number"
                 name="quantity"
                 placeholder="Cantidad del item"
               />

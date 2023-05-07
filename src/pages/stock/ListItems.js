@@ -213,6 +213,8 @@ const Items = () => {
       error_msgs.name = "El nombre no puede estar vacío";
     } else if (!isAntispam(name)) {
       error_msgs.name = "El nombre no puede contener spam";
+    } else if(name.length > 100){
+      error_msgs.name = "El nombre no puede contener más de 100 caracteres";
     }
 
     setErrors(error_msgs);
