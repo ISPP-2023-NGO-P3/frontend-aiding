@@ -83,7 +83,7 @@ export default function UpdateResource() {
    const [errors, setErrors] = useState({});
 
    function validateTelefone(valor) {
-    const regex = /^(\+34|0034|34)?[ -]*(6|7)[ -]*([0-9][ -]*){8}$/;
+    const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
     return regex.test(valor);
   }
 
@@ -92,9 +92,18 @@ export default function UpdateResource() {
     return regex.test(valor);
   }
 
+  function validateAddress(valor) {
+    const regex = /^[a-zA-Z0-9\s, 'À-ÿ\/-]*$/;
+    return regex.test(valor);
+  }
+
+  function validarCampoNumerico(valor) {
+    const regex = /^[0-9]*$/;
+    return regex.test(valor);
+  }
+  
   function validateForm() {
      let error_msgs = {};
- 
  
      if (title === "" || title === null) {
       error_msgs.title = "El título no puede estar vacío";
@@ -118,7 +127,7 @@ export default function UpdateResource() {
       error_msgs.street = "La calle no puede estar vacía";
     } else if (street.length > 255) {
       error_msgs.street = "La calle no puede tener más de 255 caracteres";
-    } else if (!validateName(street)) {
+    } else if (!validateAddress(street)) {
       error_msgs.street = "La calle no puede contener números ni caracteres especiales";
     } else if (!isAntispam(street)) {
       error_msgs.street = "La calle no puede contener palabras prohibidas";
@@ -130,12 +139,10 @@ export default function UpdateResource() {
       error_msgs.contact_phone = "Este no es un teléfono válido";
     }
 
-    if (number === "" || number === null) {
-      error_msgs.number = "El número no puede estar vacío";
-    } else if (number.length > 10) {
+    if (number.length > 10) {
       error_msgs.number = "El número no puede tener más de 10 caracteres";
-    } else if (number < 1) {
-      error_msgs.number = "El número no puede ser negativo";
+    } else if (!validarCampoNumerico(number)) {
+      error_msgs.number = "El número no puede contener letras ni caracteres especiales y no debe de ser negativo";
     }
 
     if (city === "" || city === null) {
@@ -234,6 +241,9 @@ export default function UpdateResource() {
                   placeholder="Número de la calle"
                 />
               </Form.Group>
+                {errors.number && (
+                  <p className="text-danger">{errors.number}</p>
+                )}
 
               <Form.Group className="mb-3">
                 <Form.Label>Ciudad</Form.Label>

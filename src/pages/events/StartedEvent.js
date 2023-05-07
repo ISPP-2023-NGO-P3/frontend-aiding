@@ -9,15 +9,7 @@ function StartedEvent() {
   let navigate = useNavigate();
 
     /*DATOS*/
-  const [event_data, setEventData] = React.useState([
-    {
-    title: '...',
-    description: '...',
-    start_date: '...',
-    end_date: '...',
-    places: '...',
-    }
-  ]);
+  const [event_data, setEventData] = React.useState([]);
   
 
   /*CARGA DE DATOS*/
@@ -33,6 +25,7 @@ function StartedEvent() {
     <div className='container my-5'>
       
       <h1 id="eventosTitulo">Eventos empezados</h1>
+      {event_data.length === 0 && <p>No hay eventos empezados</p>}
       <Row gutter={[24, 24]} justify="center">
         {event_data.map((data, index) => (
           <Col xs={24} sm={12} md={8} key={index}>

@@ -228,18 +228,7 @@ const Partners = () => {
   ];
 
   /*DATOS*/
-  const [partners_data, setPartnersData] = React.useState([
-    {
-      id: "...",
-      dni: "...",
-      name: "...",
-      last_name: "...",
-      email: "...",
-      state: "...",
-      language: "...",
-      province: "...",
-    },
-  ]);
+  const [partners_data, setPartnersData] = React.useState([]);
 
   useEffect(() => {
     partners.get().then((response) => {
@@ -335,12 +324,13 @@ const Partners = () => {
         <Button onClick={handleShow} id="boton-importar">
           Importar socios
         </Button>
-        <Button id="boton-importar" onClick={() => exportToExcel("myTable")}>
-          Exportar a Excel
-        </Button>
-        <Button id="boton-importar" onClick={() => notifyPartners()}>
-          Notificar socios seleccionados
-        </Button>
+        {partners_data.length > 0 && (
+        <><Button id="boton-importar" onClick={() => exportToExcel("myTable")}>
+            Exportar a Excel
+          </Button><Button id="boton-importar" onClick={() => notifyPartners()}>
+              Notificar socios seleccionados
+            </Button></>
+        )}
       </div>
 
       <Modal show={show} onHide={handleClose}>

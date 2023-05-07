@@ -194,6 +194,7 @@ export default function Details() {
   const sex = partnerFormatter(user.sex);
   const language = partnerFormatter(user.language);
   const periodicity = donationFormatter(donation.periodicity);
+  const donationExist = existDonation();
 
   return (
     <section>
@@ -448,6 +449,9 @@ export default function Details() {
                   </MDBCol>
                 </MDBRow>
                 <hr /> 
+                {donationExist && ( 
+                  
+                  <section>
                 <MDBRow>
                   <MDBCol>
                     <MDBCardText className="text-muted w-auto">
@@ -468,6 +472,8 @@ export default function Details() {
                   </MDBCol>
                 </MDBRow>
                 <hr />
+                </section>
+              )}
                 <MDBRow>
                   <MDBCol>
                     <MDBCardText className="text-muted w-auto">
