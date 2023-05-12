@@ -175,7 +175,7 @@ export default function Details() {
   const columnsDraft = [
     {
       title: 'ID del Voluntario',
-      dataIndex: 'num_volunteer',
+      dataIndex: 'id',
     },
     {
       title: 'Nombre',

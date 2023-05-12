@@ -175,7 +175,7 @@ export default function Details() {
   const columnsDraft = [
     {
       title: 'ID del Voluntario',
-      dataIndex: 'num_volunteer',
+      dataIndex: 'id',
     },
     {
       title: 'Nombre',
@@ -204,15 +204,7 @@ export default function Details() {
     },
   ];
 
-  const [volunteers_data, setVolunteersData] = React.useState([
-    {
-      num_volunteer: '...',
-      nif: '...',
-      name: '...',
-      last_name: '...',
-      rol: '...',
-    }
-  ]);
+  const [volunteers_data, setVolunteersData] = React.useState([]);
 
   useEffect(() => {
     volunteers.get(`/turns/${id}/volunteers`).then((response) => {
