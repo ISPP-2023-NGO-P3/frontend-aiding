@@ -224,6 +224,11 @@ export default function Details() {
     return(
       <section>
       <MDBContainer className="py-5">
+      <MDBCol lg="1">
+        <Button  onClick={()=> navigate(`/roles/volunteers/turns`) } type="button" id="button" className="btn btn-light w-100">
+          Volver
+        </Button>
+      </MDBCol>
         <center>
           <h2>
           Turno
