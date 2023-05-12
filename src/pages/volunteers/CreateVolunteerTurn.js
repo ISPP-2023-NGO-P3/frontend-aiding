@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import { volunteers } from "./services/backend.js";
 import swal from "sweetalert";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 
@@ -16,7 +16,7 @@ const successMsg = {
 
 const errorMsg = {
   title: "Mensaje de error",
-  text: "Se ha producido un error al asignar el voluntario",
+  text: "El voluntario no se ha podido asignar correctamente porque está inactivo",
   icon: "error",
   button: "Aceptar",
   timer: "5000",
@@ -86,12 +86,18 @@ function CreateVolunteerTurn() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    for (let v of volunteerList) {
-      if (validateForm() && v.state !== "Inactivo") {
+    if (validateForm()) {
+      const selectedVolunteer = volunteerList.map((volunteer) => {
+        if (volunteer.id === parseInt(volunteer_id)) {
+          return volunteer;
+        }
+      }
+      );
+      if (selectedVolunteer && selectedVolunteer.state !== "Inactivo") {
         postVolunteerTurn(formData);
       } else {
         swal({
-          title: "Usario inactivo",
+          title: "Usuario inactivo",
           text: "No se puede asignar porque el voluntario está inactivo",
           icon: "error",
           button: "Aceptar",
@@ -99,7 +105,7 @@ function CreateVolunteerTurn() {
         });
       }
     }
-  };
+  };  
 
   return (
     <div className="container my-5 shadow">
@@ -122,8 +128,8 @@ function CreateVolunteerTurn() {
                 ))}
               </Form.Control>
             </Form.Group>
-            {errors.volunteer && (
-              <p className="text-danger">{errors.volunteer}</p>
+            {errors.name && (
+              <p className="text-danger">{errors.name}</p>
             )}
           </div>
         </div>
@@ -136,6 +142,12 @@ function CreateVolunteerTurn() {
           >
             Asignar voluntario
           </Button>
+          <Link
+            className="btn btn-outline-danger col mb-4 mx-2"
+            to={`/roles/volunteers/turns/${id}/draft`}
+          >
+            Cancelar
+          </Link>
         </div>
       </Form>
     </div>
