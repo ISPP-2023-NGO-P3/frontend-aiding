@@ -71,6 +71,8 @@ export default function ShowAdvertisement() {
     }
   }, [advertisement]);
 
+  const role = localStorage.getItem("role");
+
   return (
     <Container>
       <Row className="mt-5">
@@ -124,7 +126,7 @@ export default function ShowAdvertisement() {
           <Row>
             <SafeHTML html={body} />
           </Row>
-          {isAuthenticated && (
+          {isAuthenticated && role === 'admin' && (
             <Row className="justify-content-center">
               <Link
                 className="btn btn-outline-primary col-4 mb-4 mx-2"
