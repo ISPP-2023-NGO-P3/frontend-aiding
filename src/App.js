@@ -162,7 +162,7 @@ var navLinksCaptainSupervisor = [
   }, */
 ];
 
-var logo = ["./logo.png"];
+var logo = ["/logo.png"];
 
 export default function App() {
   return (
