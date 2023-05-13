@@ -37,9 +37,9 @@ function CreateVolunteer() {
     rol: "Voluntario",
     postal_code: "",
     observations: "",
-    computerKnowledge: "False",
-    truckKnowledge: "False",
-    warehouseKnowledge: "False",
+    computerKnowledge: false,
+    truckKnowledge: false,
+    warehouseKnowledge: false,
     otherKnowledge: "",
   });
 
@@ -343,9 +343,11 @@ function CreateVolunteer() {
             <Form.Group className="mb-3">
               <Form.Label>Conocimiento Tecnologico</Form.Label>
               <Form.Check
-                type="checkbox"
-                checked={computerKnowledge}
+                type="switch"
+                id="custom-switch"
                 name="computerKnowledge"
+                defaultChecked={false}
+                checked={computerKnowledge}
                 onChange={(e) => onInputChange(e)}
               />
             </Form.Group>
@@ -353,9 +355,11 @@ function CreateVolunteer() {
             <Form.Group className="mb-3">
               <Form.Label>Puede Manejar un Camión</Form.Label>
               <Form.Check
-                type="checkbox"
-                checked={truckKnowledge}
+                type="switch"
+                id="custom-switch"
                 name="truckKnowledge"
+                defaultChecked={false}
+                checked={truckKnowledge}
                 onChange={(e) => onInputChange(e)}
               />
             </Form.Group>
@@ -363,9 +367,11 @@ function CreateVolunteer() {
             <Form.Group className="mb-3">
               <Form.Label>Sabe gestionar almacenes</Form.Label>
               <Form.Check
-                type="checkbox"
-                checked={warehouseKnowledge}
+                type="switch"
+                id="custom-switch"
                 name="warehouseKnowledge"
+                defaultChecked={false}
+                checked={warehouseKnowledge}
                 onChange={(e) => onInputChange(e)}
               />
             </Form.Group>
