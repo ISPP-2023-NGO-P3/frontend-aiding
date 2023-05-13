@@ -83,7 +83,7 @@ export default function Details() {
   const role = localStorage.getItem("role");
 
   function handleClickReturn(){
-    navigate(`/admin/volunteers`);
+    role === 'admin' ? navigate(`/admin/volunteers`) : navigate(`/roles/volunteers`);
   }
 
   return (
