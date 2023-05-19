@@ -36,6 +36,23 @@ const Partners = () => {
   const handleChange = (pagination, filters, sorter) => {
     console.log('Various parameters', pagination, filters, sorter);
     setFilteredInfo(filters);
+
+    // Filtrar los voluntarios según los filtros aplicados
+    const filteredPartners = partners_data.filter((partner) => {
+      for (let key in filters) {
+        const filterValue = filters[key];
+        if (filterValue && filterValue.length > 0) {
+          const partnerValue = partner[key].toLowerCase();
+          const filterValueLower = filterValue.map((value) => value.toLowerCase());
+          if (!filterValueLower.includes(partnerValue)) {
+            return false;
+          }
+        }
+      }
+      return true;
+    });
+    
+    setFilteredPartners(filteredPartners);
   };
 
   const clearFilters = () => {

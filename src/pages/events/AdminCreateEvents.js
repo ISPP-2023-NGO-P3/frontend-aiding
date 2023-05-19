@@ -87,7 +87,7 @@ function AdminCreateEvent() {
         navigate("/admin/events");
       }).catch((error) => {
         if(error.response.status === 400) {
-          let error_msgs = {general: "La dirección es inválida"};
+          let error_msgs = {general: "La dirección es inválida debido a que no existe"};
           setErrors(error_msgs);
         } else{
           console.log(error);

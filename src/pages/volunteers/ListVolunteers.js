@@ -24,8 +24,12 @@ const Volunteers = () => {
     const filteredVolunteers = volunteers_data.filter((volunteer) => {
       for (let key in filters) {
         const filterValue = filters[key];
-        if (filterValue && filterValue.length > 0 && !filterValue.includes(volunteer[key])) {
-          return false;
+        if (filterValue && filterValue.length > 0) {
+          const volunteerValue = volunteer[key].toLowerCase();
+          const filterValueLower = filterValue.map((value) => value.toLowerCase());
+          if (!filterValueLower.includes(volunteerValue)) { 
+            return false;
+          }
         }
       }
       return true;
