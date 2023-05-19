@@ -19,6 +19,19 @@ const Volunteers = () => {
   const handleChange = (pagination, filters, sorter) => {
     console.log('Various parameters', pagination, filters, sorter);
     setFilteredInfo(filters);
+
+    // Filtrar los voluntarios según los filtros aplicados
+    const filteredVolunteers = volunteers_data.filter((volunteer) => {
+      for (let key in filters) {
+        const filterValue = filters[key];
+        if (filterValue && filterValue.length > 0 && !filterValue.includes(volunteer[key])) {
+          return false;
+        }
+      }
+      return true;
+    });
+
+    setFilteredVol(filteredVolunteers);
   };
 
   const clearFilters = () => {
