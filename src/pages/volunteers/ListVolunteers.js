@@ -28,7 +28,9 @@ const Volunteers = () => {
           const filterValueLower = filterValue.map((value) =>
             value.toLowerCase()
           );
-          if (!filterValueLower.some((value) => volunteerValue.includes(value))) {
+          if (
+            !filterValueLower.some((value) => volunteerValue.includes(value))
+          ) {
             return false;
           }
         }
