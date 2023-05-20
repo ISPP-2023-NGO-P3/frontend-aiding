@@ -24,14 +24,30 @@ const Volunteers = () => {
       for (let key in filters) {
         const filterValue = filters[key];
         if (filterValue && filterValue.length > 0) {
-          const volunteerValue = volunteer[key].toLowerCase();
-          const filterValueLower = filterValue.map((value) =>
-            value.toLowerCase()
-          );
-          if (
-            !filterValueLower.some((value) => volunteerValue.includes(value))
-          ) {
-            return false;
+          const volunteerValue = volunteer[key];
+          if (key === "id") {
+            // Si el filtro es para el ID
+            const filterNumbers = filterValue.map((value) => parseInt(value));
+            const volunteerID = parseInt(volunteerValue);
+            if (
+              !filterNumbers.some((value) =>
+                volunteerID.toString().includes(value.toString())
+              )
+            ) {
+              return false;
+            }
+          } else {
+            const volunteerValueLower = volunteerValue.toLowerCase();
+            const filterValueLower = filterValue.map((value) =>
+              value.toLowerCase()
+            );
+            if (
+              !filterValueLower.some((value) =>
+                volunteerValueLower.includes(value)
+              )
+            ) {
+              return false;
+            }
           }
         }
       }
