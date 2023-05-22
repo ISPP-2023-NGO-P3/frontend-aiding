@@ -6,7 +6,6 @@ import Highlighter from "react-highlight-words";
 import { useNavigate } from "react-router-dom";
 import { volunteers } from "./services/backend.js";
 import "bootstrap/dist/css/bootstrap.css";
-import axios from "axios";
 import { Col, Row } from "react-bootstrap";
 import { useNotificationContext } from "../../components/notificationContext.js";
 
@@ -16,11 +15,53 @@ const Volunteers = () => {
   /*LIMPIEZA*/
   const [filteredInfo, setFilteredInfo] = useState({});
 
+  const handleChange = (pagination, filters, sorter) => {
+    console.log("Various parameters", pagination, filters, sorter);
+    setFilteredInfo(filters);
+
+    // Filtrar los voluntarios según los filtros aplicados
+    const filteredVolunteers = volunteers_data.filter((volunteer) => {
+      for (let key in filters) {
+        const filterValue = filters[key];
+        if (filterValue && filterValue.length > 0) {
+          const volunteerValue = volunteer[key];
+          if (key === "id") {
+            // Si el filtro es para el ID
+            const filterNumbers = filterValue.map((value) => parseInt(value));
+            const volunteerID = parseInt(volunteerValue);
+            if (
+              !filterNumbers.some((value) =>
+                volunteerID.toString().includes(value.toString())
+              )
+            ) {
+              return false;
+            }
+          } else {
+            const volunteerValueLower = volunteerValue.toLowerCase();
+            const filterValueLower = filterValue.map((value) =>
+              value.toLowerCase()
+            );
+            if (
+              !filterValueLower.some((value) =>
+                volunteerValueLower.includes(value)
+              )
+            ) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    });
+
+    setFilteredVol(filteredVolunteers);
+  };
+
   const clearFilters = () => {
     setFilteredInfo({});
     setSearchText("");
   };
-  
+
   /*BUSCADOR*/
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -199,7 +240,9 @@ const Volunteers = () => {
 
   function createVolunteerRedirect() {
     const role = localStorage.getItem("role");
-    navigate(role === 'admin' ? "/admin/volunteers/create" : "/roles/volunteers/create");
+    navigate(
+      role === "admin" ? "/admin/volunteers/create" : "/roles/volunteers/create"
+    );
   }
 
   /* NOTIFICATIONS */
@@ -210,7 +253,11 @@ const Volunteers = () => {
     let emails_aux = filteredVol.map((obj) => obj.email).join(" ");
     setFilteredEmails(emails_aux);
     const role = localStorage.getItem("role");
-    navigate(role === 'admin' ? "/admin/notification/create" : "/roles/notification/create");
+    navigate(
+      role === "admin"
+        ? "/admin/notification/create"
+        : "/roles/notification/create"
+    );
   }
 
   const [filteredVol, setFilteredVol] = useState([
@@ -243,7 +290,7 @@ const Volunteers = () => {
         Limpiar filtros
       </Button>
       {volunteers_data.length > 0 && (
-      <Col md="auto">
+        <Col md="auto">
           <Button id="boton-importar" onClick={() => notifyVol()}>
             Notificar voluntarios seleccionados
           </Button>
@@ -255,7 +302,11 @@ const Volunteers = () => {
           return {
             onClick: (event) => {
               const role = localStorage.getItem("role");
-              navigate(role === 'admin' ? "/admin/volunteers/" + record.id : "/roles/volunteers/" + record.id);
+              navigate(
+                role === "admin"
+                  ? "/admin/volunteers/" + record.id
+                  : "/roles/volunteers/" + record.id
+              );
             },
           };
         }}
