@@ -318,8 +318,12 @@ const Partners = () => {
         window.location.reload(true);
       })
       .catch((error) => {
-        setErrors(error.response.data["error"]);
-        console.log(errors);
+        console.log(error);
+        if (error.response.status === 409){
+          setErrors(error.response.data["error"]);
+        } else {
+          setErrors("Compruebe el que el archivo tenga el formato correcto, si el problema persiste contacte con el administrador.");
+        }
       });
     partners.get().then((response) => {
       setPartnersData(response.data);
