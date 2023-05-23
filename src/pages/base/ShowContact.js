@@ -1,6 +1,6 @@
 import React from "react";
 import swal from "sweetalert";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useState, useEffect } from "react";
@@ -134,10 +134,16 @@ const onSubmit = async (e) => {
       </div>
   </div>
   <div className="row justify-content-center">
-    <div className="col-md-5">
-      <Button variant="primary" type="submit">
+    <div className="col-md-7">
+      <Button className="col mb-4 mx-2" variant="outline-success" type="submit">
         Actualizar
       </Button>
+      <Link
+        className="btn btn-outline-danger col mb-4 mx-2"
+        to="/admin/base/contacts"
+      >
+        Volver
+      </Link>
     </div>    
   </div>
   </Form>

@@ -99,6 +99,10 @@ function CreateDonation() {
       }
     };
   
+    function handleClickReturn(){
+      navigate(`/admin/partners/${id}`);
+    }
+
     return (
       <div className="container my-5 shadow">
         <h1 className="pt-3">Crear donación</h1>
@@ -136,6 +140,9 @@ function CreateDonation() {
           {errors.general && (<p className="text-danger">{errors.general}</p>)}
             <Button className="col mb-4 mx-5" variant="outline-success" type="submit">
               Crear donación
+            </Button>
+            <Button className="col mb-4 mx-2" variant="outline-danger" onClick={()=> handleClickReturn() }>
+              Cancelar
             </Button>
           </div>
         </Form>

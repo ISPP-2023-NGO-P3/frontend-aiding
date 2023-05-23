@@ -118,10 +118,14 @@ const AdminCreateAdvertisement = () => {
 
     if (title === "" || title === null) {
       error_msgs.title = "El título no puede estar vacío";
+    } else if (title.length > 200) {
+      error_msgs.title = "El título no puede tener más de 200 caractéres";
     }
 
     if (abstract === "" || abstract === null) {
       error_msgs.abstract = "El resumen no puede estar vacío";
+    } else if (abstract.length > 250) {
+      error_msgs.abstract = "El resumen no puede tener más de 250 caractéres";
     }
 
     if (
@@ -130,6 +134,8 @@ const AdminCreateAdvertisement = () => {
       editor.getHTML() === "<p></p>"
     ) {
       error_msgs.body = "El cuerpo del artículo no puede estar vacío";
+    } else if (editor.getHTML().length > 5000) {
+      error_msgs.body = "El cuerpo del artículo no puede tener más de 5000 caractéres";
     }
 
     if (section_id === "" || section_id === null) {

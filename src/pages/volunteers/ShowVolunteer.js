@@ -20,7 +20,7 @@ export default function Details() {
   const [user, setUser] = useState({
     name: "",
     last_name: "",
-    num_volunteer: "",
+    id: "",
     nif: "",
     place: "",
     phone: "",
@@ -80,14 +80,28 @@ export default function Details() {
   }
   const situation = volunteerFormatter(user.situation);
   const rol = volunteerFormatter(user.rol);
+  const role = localStorage.getItem("role");
+
+  function handleClickReturn(){
+    role === 'admin' ? navigate(`/admin/volunteers`) : navigate(`/roles/volunteers`);
+  }
 
   return (
     <section>
       <MDBContainer className="py-5">
-        <center>
-        <h2>
-          {user.name} {user.last_name}
-          </h2></center>
+      <MDBRow>
+          <MDBCol lg="1"> 
+            <Button  onClick={()=> handleClickReturn() } type="button" id="button" className="btn btn-light w-100">
+              Volver
+            </Button>
+          </MDBCol>
+          <MDBCol lg="10"> 
+          <center>
+          <h2>
+            {user.name} {user.last_name}
+            </h2></center>
+            </MDBCol>
+        </MDBRow>
         <hr />
         <MDBRow>
           <MDBCol lg="10"> 
@@ -98,11 +112,11 @@ export default function Details() {
                     <MDBCardBody>
                       <MDBRow>
                         <MDBCol sm="3">
-                          <MDBCardText>Número de Voluntario</MDBCardText>
+                          <MDBCardText>ID del Voluntario</MDBCardText>
                         </MDBCol>
                         <MDBCol sm="9" className="align-items-center d-flex justify-content-center">
                           <MDBCardText className="text-muted">
-                            {user.num_volunteer}
+                            {user.id}
                           </MDBCardText>
                         </MDBCol>
                       </MDBRow>
@@ -262,7 +276,8 @@ export default function Details() {
                   <MDBCol>
                     <MDBCardText className="text-muted w-auto">
                       <Button
-                        onClick={() => {navigate(`/admin/volunteers/update/${id}`)}}
+                        onClick={() => 
+                          {role === 'admin' ? navigate(`/admin/volunteers/update/${id}`) : navigate(`/roles/volunteers/update/${id}`)}}
                         type="button" id="button" 
                         className="btn btn-light w-100"
                       >
@@ -271,7 +286,6 @@ export default function Details() {
                     </MDBCardText>
                   </MDBCol>
                 </MDBRow>
-                <hr />
               </MDBCardBody>
             </MDBCard>
           </MDBCol>

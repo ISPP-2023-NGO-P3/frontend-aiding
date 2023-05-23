@@ -6,12 +6,61 @@ import Highlighter from "react-highlight-words";
 import { useNavigate } from "react-router-dom";
 import { volunteers } from "./services/backend.js";
 import "bootstrap/dist/css/bootstrap.css";
-import axios from "axios";
 import { Col, Row } from "react-bootstrap";
 import { useNotificationContext } from "../../components/notificationContext.js";
 
 const Volunteers = () => {
   let navigate = useNavigate();
+
+  /*LIMPIEZA*/
+  const [filteredInfo, setFilteredInfo] = useState({});
+
+  const handleChange = (pagination, filters, sorter) => {
+    console.log("Various parameters", pagination, filters, sorter);
+    setFilteredInfo(filters);
+
+    // Filtrar los voluntarios según los filtros aplicados
+    const filteredVolunteers = volunteers_data.filter((volunteer) => {
+      for (let key in filters) {
+        const filterValue = filters[key];
+        if (filterValue && filterValue.length > 0) {
+          const volunteerValue = volunteer[key];
+          if (key === "id") {
+            // Si el filtro es para el ID
+            const filterNumbers = filterValue.map((value) => parseInt(value));
+            const volunteerID = parseInt(volunteerValue);
+            if (
+              !filterNumbers.some((value) =>
+                volunteerID.toString().includes(value.toString())
+              )
+            ) {
+              return false;
+            }
+          } else {
+            const volunteerValueLower = volunteerValue.toLowerCase();
+            const filterValueLower = filterValue.map((value) =>
+              value.toLowerCase()
+            );
+            if (
+              !filterValueLower.some((value) =>
+                volunteerValueLower.includes(value)
+              )
+            ) {
+              return false;
+            }
+          }
+        }
+      }
+      return true;
+    });
+
+    setFilteredVol(filteredVolunteers);
+  };
+
+  const clearFilters = () => {
+    setFilteredInfo({});
+    setSearchText("");
+  };
 
   /*BUSCADOR*/
   const [searchText, setSearchText] = useState("");
@@ -24,6 +73,7 @@ const Volunteers = () => {
   };
   const handleReset = (clearFilters) => {
     clearFilters();
+    setFilteredInfo({});
     setSearchText("");
   };
   const getColumnSearchProps = (dataIndex) => ({
@@ -42,7 +92,7 @@ const Volunteers = () => {
       >
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Búsqueda`}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -70,7 +120,7 @@ const Volunteers = () => {
               width: 90,
             }}
           >
-            Search
+            Buscar
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -79,7 +129,7 @@ const Volunteers = () => {
               width: 90,
             }}
           >
-            Reset
+            Resetear
           </Button>
           <Button
             type="link"
@@ -92,7 +142,7 @@ const Volunteers = () => {
               setSearchedColumn(dataIndex);
             }}
           >
-            Filter
+            Filtrar
           </Button>
         </Space>
       </div>
@@ -129,22 +179,26 @@ const Volunteers = () => {
   const columns = [
     {
       title: "ID del Voluntario",
-      dataIndex: "num_volunteer",
-      ...getColumnSearchProps("num_volunteer"),
+      dataIndex: "id",
+      filteredValue: filteredInfo.id || null,
+      ...getColumnSearchProps("id"),
     },
     {
       title: "NIF",
       dataIndex: "nif",
+      filteredValue: filteredInfo.nif || null,
       ...getColumnSearchProps("nif"),
     },
     {
       title: "Nombre",
       dataIndex: "name",
+      filteredValue: filteredInfo.name || null,
       ...getColumnSearchProps("name"),
     },
     {
       title: "Apellidos",
       dataIndex: "last_name",
+      filteredValue: filteredInfo.last_name || null,
       ...getColumnSearchProps("last_name"),
     },
     {
@@ -164,6 +218,7 @@ const Volunteers = () => {
           value: "Inactivo",
         },
       ],
+      filteredValue: filteredInfo.state || null,
       onFilter: (value, record) => record.state.includes(value),
       render: (state) => (
         <Tag color={state === "Activo" ? "green" : "red"} key={state}>
@@ -174,16 +229,7 @@ const Volunteers = () => {
   ];
 
   /*DATOS*/
-  const [volunteers_data, setVolunteersData] = React.useState([
-    {
-      num_volunteer: "...",
-      nif: "...",
-      name: "...",
-      last_name: "...",
-      email: "...",
-      state: "...",
-    },
-  ]);
+  const [volunteers_data, setVolunteersData] = React.useState([]);
 
   useEffect(() => {
     volunteers.get().then((response) => {
@@ -193,7 +239,10 @@ const Volunteers = () => {
   }, []);
 
   function createVolunteerRedirect() {
-    navigate("/admin/volunteers/create");
+    const role = localStorage.getItem("role");
+    navigate(
+      role === "admin" ? "/admin/volunteers/create" : "/roles/volunteers/create"
+    );
   }
 
   /* NOTIFICATIONS */
@@ -203,12 +252,17 @@ const Volunteers = () => {
   function notifyVol() {
     let emails_aux = filteredVol.map((obj) => obj.email).join(" ");
     setFilteredEmails(emails_aux);
-    navigate("/admin/notification/create");
+    const role = localStorage.getItem("role");
+    navigate(
+      role === "admin"
+        ? "/admin/notification/create"
+        : "/roles/notification/create"
+    );
   }
 
   const [filteredVol, setFilteredVol] = useState([
     {
-      num_volunteer: "...",
+      id: "...",
       nif: "...",
       name: "...",
       last_name: "...",
@@ -230,25 +284,34 @@ const Volunteers = () => {
             Crear voluntario
           </Button>
         </Col>
+      </Row>
+      <Button onClick={clearFilters} id="boton-socio">
+        Limpiar filtros
+      </Button>
+      {volunteers_data.length > 0 && (
         <Col md="auto">
           <Button id="boton-importar" onClick={() => notifyVol()}>
             Notificar voluntarios seleccionados
           </Button>
         </Col>
-      </Row>
-      <br></br>
+      )}
       <Table
         id="table"
         onRow={(record, rowIndex) => {
           return {
             onClick: (event) => {
-              navigate("/admin/volunteers/" + record.id);
+              const role = localStorage.getItem("role");
+              navigate(
+                role === "admin"
+                  ? "/admin/volunteers/" + record.id
+                  : "/roles/volunteers/" + record.id
+              );
             },
           };
         }}
         columns={columns}
         dataSource={volunteers_data}
-        onChange={onChange}
+        onChange={onChange && handleChange}
         scroll={{ y: 400 }}
         pagination={{ pageSize: 20 }}
       />

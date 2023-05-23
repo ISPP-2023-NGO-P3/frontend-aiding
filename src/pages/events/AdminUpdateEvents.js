@@ -7,6 +7,9 @@ import { useEffect } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import { userTimezone } from "../../config";
+import { isAntispam } from "../../components/AntiSpam.js";
+import { useState } from "react";
+
 
 const errorMsg = {
   title: "Mensaje de error",
@@ -88,8 +91,10 @@ function AdminUpdateEvent() {
       }
       const onSubmit = async (e) => {
         e.preventDefault();
+        if (validateForm()){
         const eventWithTimeZone = { ...event,userTimezone}
         putEvent(eventWithTimeZone);
+        }
       };
 
       function putEvent(event) {
@@ -101,12 +106,115 @@ function AdminUpdateEvent() {
             navigate(`/events/${id}`);
           })
           .catch((error) => {
+            if(error.response.status === 400) {
+              let error_msgs = {general: "La dirección es inválida"};
+              setErrors(error_msgs);
+            } else{
             console.log(error);
             swal(errorMsg);
+            }
           });
+      }    
+
+      /* Validator */
+    const [errors, setErrors] = useState({});
+
+    function validateDate(){
+      if (start_date > end_date){
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    function validateStartDate(startDate){
+      let today = moment((new Date()).toISOString()).format('YYYY-MM-DD HH:mm:ss');
+      if (startDate < today){
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    function validarCampoNumerico(valor) {
+      const regex = /^[0-9]*$/;
+      return regex.test(valor);
+    }
+    
+    function validateForm() {
+      let error_msgs = {};
+
+      if (title === "" || title === null) {
+        error_msgs.title = "El nombre no puede estar vacío";
+      } else if (title.length >= 100){
+        error_msgs.title = "El nombre no puede tener más de 100 caracteres";
+      } else if (!isAntispam(title)){
+        error_msgs.title = "El nombre no puede contener palabras prohibidas";
+      }
+      
+      if (description === "" || description === null) {
+        error_msgs.description = "La descripción no puede estar vacía";
+      } else if (description.length >= 500){
+        error_msgs.description = "La descripción no puede tener más de 500 caracteres";
+      } else if (!isAntispam(description)){
+        error_msgs.description = "La descripción no puede contener palabras prohibidas";
       }
 
-    
+      if (places === "" || places === null) {
+        error_msgs.places = "Las plazas no pueden estar vacías";
+      } else if (places.length <= 0){
+        error_msgs.places = "Las plazas no pueden ser negativas";
+      } else if (!validarCampoNumerico(places)){
+        error_msgs.places = "Las plazas deben ser un número";
+      }
+
+      if (street === "" || street === null) {
+        error_msgs.street = "La calle no puede estar vacía";
+      } else if (street.length >= 255){
+        error_msgs.street = "La calle no puede tener más de 255 caracteres";
+      } else if (!isAntispam(street)){
+        error_msgs.street = "La calle no puede contener palabras prohibidas";
+      }
+
+      if (number.length >= 10){
+        error_msgs.number = "El número no puede tener más de 10 caracteres";
+      } else if (!validarCampoNumerico(number)){
+        error_msgs.number = "El número debe ser un número";
+      }
+
+      if (city === "" || city === null) {
+        error_msgs.city = "La ciudad no puede estar vacía";
+      } else if (city.length >= 100){
+        error_msgs.city = "La ciudad no puede tener más de 100 caracteres";
+      } else if (!isAntispam(city)){
+        error_msgs.city = "La ciudad no puede contener palabras prohibidas";
+      }
+
+      if (start_date === "" || start_date === null) {
+        error_msgs.start_date = "La fecha de inicio no puede estar vacía";
+      } else if (!validateStartDate(start_date)){
+        error_msgs.start_date = "La fecha de inicio no puede ser anterior a la actual";
+      } else if (!validateDate()){
+        error_msgs.start_date = "La fecha de fin no puede ser anterior a la de inicio";
+      }
+
+      if (end_date === "" || end_date === null) {
+        error_msgs.end_date = "La fecha de fin no puede estar vacía";
+      } else if (!validateDate()){
+        error_msgs.end_date = "La fecha de fin no puede ser anterior a la de inicio";
+      } else if (!validateStartDate(end_date)){
+        error_msgs.end_date = "La fecha de fin no puede ser anterior a la actual";
+      }
+
+      setErrors(error_msgs);
+
+      if (Object.keys(error_msgs).length === 0) {
+        return true;
+      } else {
+        return false;
+    }
+
+    }
 
     return (
         <div className="container my-5">
@@ -115,17 +223,19 @@ function AdminUpdateEvent() {
             <h1 className="pt-3">Actualizar evento</h1>
             <Form className="" onSubmit={(e) => onSubmit(e)}>
               <div className="row justify-content-evenly">
-              <Form.Group className="mb-3">
+                <Form.Group className="mb-3">
                   <Form.Label>Título</Form.Label>
                   <Form.Control
                     onChange={(e) => onTitleChange(e)}
                     value={title}
                     name="title"
-                    placeholder="Título del evento (máximo 100 caracteres)"
+                    placeholder="Título del evento (100 caracteres)"
                     maxLength={100}
                   />
                 </Form.Group>
-  
+                {errors.title && (
+                  <p className="text-danger">{errors.title}</p>
+                )}
                 <Form.Group className="mb-3">
                   <Form.Label>Descripción</Form.Label>
                   <Form.Control
@@ -135,7 +245,9 @@ function AdminUpdateEvent() {
                     placeholder="Descripción del evento"
                   />
                 </Form.Group>
-
+                {errors.description && (
+                  <p className="text-danger">{errors.description}</p>
+                )}
                 <Form.Group className="mb-3">
                   <Form.Label>Plazas</Form.Label>
                   <Form.Control
@@ -145,7 +257,9 @@ function AdminUpdateEvent() {
                     placeholder="Plazas en el evento"
                   />
                 </Form.Group>
-
+                {errors.places && (
+                  <p className="text-danger">{errors.places}</p>
+                )}
   
                 <Form.Group className="mb-3">
                   <Form.Label>Calle</Form.Label>
@@ -156,6 +270,10 @@ function AdminUpdateEvent() {
                     placeholder="Nombre de la calle"
                   />
                 </Form.Group>
+
+                {errors.street && (
+                  <p className="text-danger">{errors.street}</p>
+                )}
   
                 <Form.Group className="mb-3">
                   <Form.Label>Número</Form.Label>
@@ -166,7 +284,9 @@ function AdminUpdateEvent() {
                     placeholder="Número de la calle"
                   />
                 </Form.Group>
-  
+                {errors.number && (
+                  <p className="text-danger">{errors.number}</p>
+                )}
                 <Form.Group className="mb-3">
                   <Form.Label>Ciudad</Form.Label>
                   <Form.Control
@@ -176,7 +296,9 @@ function AdminUpdateEvent() {
                     placeholder="Ciudad donde se encuentra el evento"
                   />
                 </Form.Group>
-
+                {errors.city && (
+                  <p className="text-danger">{errors.city}</p>
+                )}
                 <Form.Group className="mb-3">
                 <Form.Label>Fecha de inicio</Form.Label>
                 <Form.Control
@@ -186,7 +308,9 @@ function AdminUpdateEvent() {
                   name="start_date"
                 />
               </Form.Group>
-
+                {errors.start_date && (
+                  <p className="text-danger">{errors.start_date}</p>
+                )}
               <Form.Group className="mb-3">
                 <Form.Label>Fecha de finalizado</Form.Label>
                 <Form.Control
@@ -196,16 +320,19 @@ function AdminUpdateEvent() {
                   name="end_date"
                 />
               </Form.Group>
-  
+                {errors.end_date && (
+                  <p className="text-danger">{errors.end_date}</p>
+                )}
+
               </div>
-  
+              {errors.general && (<p className="text-danger">{errors.general}</p>)}
               <div className="row justify-content-evenly">
                 <Button className="col mb-4 mx-2" variant="primary" type="submit">
                   Guardar evento
                 </Button>
                 <Link
                   className="btn btn-outline-danger col mb-4 mx-2"
-                  to={`/events/${id}`}
+                  to="/admin/events"
                 >
                   Cancelar
                 </Link>

@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useState, useEffect } from "react";
+import { isAntispam } from "../../components/AntiSpam.js";
 
 const successMsg = {
   title: "Mensaje de confirmación",
@@ -47,19 +48,48 @@ function CreateItem() {
   /* Validator */
   const [errors, setErrors] = useState({});
 
+  function validateName(valor) {
+    const regex = /^[a-zA-ZÀ-ÿ]+(([',. -][a-zA-ZÀ-ÿ ])?[a-zA-ZÀ-ÿ]*)*$/;
+    return regex.test(valor);
+  }
+
+  function normalizeString(input) {
+    return input.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
   function validateForm() {
     let error_msgs = {};
 
+   itemsList.forEach((it) => {
+      if (normalizeString(it.name) === normalizeString(name)) {
+        error_msgs.name = "Ya existe un item con ese nombre";
+      }
+    });
+
     if (name === "" || name === null) {
       error_msgs.name = "El nombre no puede estar vacío";
+    } else if (name.length > 100) {
+      error_msgs.name = "El nombre no puede tener más de 100 caracteres";
+    } else if (!validateName(name)) {
+      error_msgs.name = "El nombre no puede contener números";
+    } else if (!isAntispam(name)) {
+      error_msgs.name = "El nombre no puede contener spam";
     }
 
     if (description === "" || description === null) {
       error_msgs.description = "La descripción no puede estar vacía";
+    } else if (description.length > 150) {
+      error_msgs.description = "La descripción no puede tener más de 150 caracteres";
+    } else if (!isAntispam(description)) {
+      error_msgs.description = "La descripción no puede contener spam";
     }
 
     if (quantity === "" || quantity === null) {
       error_msgs.quantity = "La cantidad no puede estar vacía";
+    } else if (quantity < 0) {
+      error_msgs.quantity = "La cantidad no puede ser negativa";
+    } else if(quantity > 1000000000){
+      error_msgs.quantity = "La cantidad no puede ser mayor a 1.000.000.000";
     }
 
     if (type_id === "" || type_id === null) {
@@ -90,6 +120,8 @@ function CreateItem() {
     },
   ]);
 
+  const [itemsList, setItemsList] = useState([]);
+
   function getTipos() {
     tiposBE
       .get("")
@@ -101,8 +133,16 @@ function CreateItem() {
       });
   }
 
+  function getItems() {
+    items.get("").then((response) => {
+      setItemsList(response.data);
+      console.log(response.data);
+    });
+  }
+
   useEffect(() => {
     getTipos();
+    getItems();
   }, []);
 
   const { name, description, quantity, type_id } = item;
@@ -152,7 +192,6 @@ function CreateItem() {
               <Form.Control
                 onChange={(e) => onInputChange(e)}
                 value={quantity}
-                type="number"
                 name="quantity"
                 placeholder="Cantidad del item"
               />
@@ -161,7 +200,7 @@ function CreateItem() {
               <p className="text-danger">{errors.quantity}</p>
             )}
             <Form.Group className="mb-3">
-              <Form.Label>Tipos</Form.Label>
+              <Form.Label>Tipo</Form.Label>
               <Form.Select
                 onChange={(e) => onInputChange(e)}
                 value={type_id}

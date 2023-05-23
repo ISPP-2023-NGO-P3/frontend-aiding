@@ -44,6 +44,19 @@ const onChange = (pagination, filters, sorter, extra) => {
 const AdminListAdvertisement = () => {
   let navigate = useNavigate();
 
+  /*LIMPIEZA*/
+  const [filteredInfo, setFilteredInfo] = useState({});
+
+  const handleChange = (pagination, filters, sorter) => {
+    console.log('Various parameters', pagination, filters, sorter);
+    setFilteredInfo(filters);
+  };
+
+  const clearFilters = () => {
+    setFilteredInfo({});
+    setSearchText("");
+  };
+
   /* Filters */
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -55,6 +68,7 @@ const AdminListAdvertisement = () => {
   };
   const handleReset = (clearFilters) => {
     clearFilters();
+    setFilteredInfo({});
     setSearchText("");
   };
   const getColumnSearchProps = (dataIndex) => ({
@@ -73,7 +87,7 @@ const AdminListAdvertisement = () => {
       >
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Búsqueda`}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -162,11 +176,13 @@ const AdminListAdvertisement = () => {
     {
       title: "Título",
       dataIndex: "title",
+      filteredValue: filteredInfo.title || null,
       ...getColumnSearchProps("title"),
     },
     {
       title: "Sección",
       dataIndex: "section_id__name",
+      filteredValue: filteredInfo.section_id__name || null,
       ...getColumnSearchProps("section_id__name"),
     },
     {
@@ -213,6 +229,10 @@ const AdminListAdvertisement = () => {
 
     if (name === "" || name === null) {
       error_msgs.name = "El nombre no puede estar vacío";
+    } else if (name.length < 3) {
+      error_msgs.name = "El nombre debe tener al menos 3 caracteres";
+    } else if (name.length > 100) {
+      error_msgs.name = "El nombre debe tener menos de 100 caracteres";
     }
 
     setErrors(error_msgs);
@@ -305,6 +325,9 @@ const AdminListAdvertisement = () => {
             >
               Crear artículo
             </Button>
+            <Button onClick={clearFilters} id="boton-socio">
+              Limpiar filtros
+            </Button>
             <Table
               onRow={(record) => {
                 return {
@@ -315,7 +338,7 @@ const AdminListAdvertisement = () => {
               }}
               columns={columns}
               dataSource={advertisements}
-              onChange={onChange}
+              onChange={onChange && handleChange}
               scroll={{ y: 400 }}
               pagination={{ pageSize: 20 }}
             />

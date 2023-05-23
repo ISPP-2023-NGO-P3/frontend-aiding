@@ -52,20 +52,6 @@ export default function Details() {
     posittion: "",
   });
 
- /*  const {
-    title,
-    description,
-    contact_phone,
-    street,
-    number,
-    city,
-    additional_comments,
-    latitude,
-    longitude,
-    resource_type,
-  } = resource;
- */
-
   const { id } = useParams();
 
   useEffect(() => {
@@ -105,13 +91,8 @@ export default function Details() {
   const customIcon = new L.Icon({
     iconUrl: require("../../../images/marker.png"),
     iconRetinaUrl: require("../../../images/marker.png"),
-    //iconAnchor: null,
-    //popupAnchor: null,
-    //shadowUrl: null,
-    //shadowSize: null,
     shadowAnchor: null,
     iconSize: new L.Point(20, 30),
-    //className: 'leaflet-div-icon'
   });
 
   // FORMATEADOR DE LOS ENUMERADOS
@@ -135,6 +116,7 @@ export default function Details() {
   return (
     <section>
       <MDBContainer className="py-5">
+        
         <MDBRow>
           <MDBCol lg="6">
             <MDBCard className="mb-4">
@@ -304,6 +286,7 @@ export default function Details() {
             </MDBCard>
           </MDBCol>
         </MDBRow>
+        <hr />
         <Button
           onClick={() => {
             navigate(`/admin/information/resources`);
@@ -315,7 +298,7 @@ export default function Details() {
           Volver al listado
         </Button>
 
-        <hr />
+        
       </MDBContainer>
     </section>
   );

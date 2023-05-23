@@ -10,10 +10,8 @@ import "bootstrap/dist/css/bootstrap.css";
 import Modal from "react-bootstrap/Modal";
 import Form from "react-bootstrap/Form";
 import * as XLSX from "xlsx";
-import axios from "axios";
 import { MDBCol, MDBRow } from "mdb-react-ui-kit";
 import { useNotificationContext } from "../../components/notificationContext.js";
-
 
 const Partners = () => {
   let navigate = useNavigate();
@@ -34,8 +32,27 @@ const Partners = () => {
   const [filteredInfo, setFilteredInfo] = useState({});
 
   const handleChange = (pagination, filters, sorter) => {
-    console.log('Various parameters', pagination, filters, sorter);
+    console.log("Various parameters", pagination, filters, sorter);
     setFilteredInfo(filters);
+
+    // Filtrar los voluntarios según los filtros aplicados
+    const filteredPartners = partners_data.filter((partner) => {
+      for (let key in filters) {
+        const filterValue = filters[key];
+        if (filterValue && filterValue.length > 0) {
+          const partnerValue = partner[key].toLowerCase();
+          const filterValueLower = filterValue.map((value) =>
+            value.toLowerCase()
+          );
+          if (!filterValueLower.some((value) => partnerValue.includes(value))) {
+            return false;
+          }
+        }
+      }
+      return true;
+    });
+
+    setFilteredPartners(filteredPartners);
   };
 
   const clearFilters = () => {
@@ -73,7 +90,7 @@ const Partners = () => {
       >
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Búsqueda`}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -101,7 +118,7 @@ const Partners = () => {
               width: 90,
             }}
           >
-            Search
+            Buscar
           </Button>
           <Button
             onClick={() => clearFilters && handleReset(clearFilters)}
@@ -110,7 +127,7 @@ const Partners = () => {
               width: 90,
             }}
           >
-            Reset
+            Restaurar
           </Button>
           <Button
             type="link"
@@ -123,7 +140,7 @@ const Partners = () => {
               setSearchedColumn(dataIndex);
             }}
           >
-            Filter
+            Filtrar
           </Button>
         </Space>
       </div>
@@ -233,18 +250,7 @@ const Partners = () => {
   ];
 
   /*DATOS*/
-  const [partners_data, setPartnersData] = React.useState([
-    {
-      id: "...",
-      dni: "...",
-      name: "...",
-      last_name: "...",
-      email: "...",
-      state: "...",
-      language: "...",
-      province: "...",
-    },
-  ]);
+  const [partners_data, setPartnersData] = React.useState([]);
 
   useEffect(() => {
     partners.get().then((response) => {
@@ -259,26 +265,26 @@ const Partners = () => {
 
   /* NOTIFICATIONS */
 
-  const {setFilteredEmails} = useNotificationContext();
+  const { setFilteredEmails } = useNotificationContext();
 
   function notifyPartners() {
-    let emails_aux = filteredPartners.map(obj => obj.email).join(" ");
+    let emails_aux = filteredPartners.map((obj) => obj.email).join(" ");
     setFilteredEmails(emails_aux);
     navigate("/admin/notification/create");
-  };
+  }
 
-  const [filteredPartners, setFilteredPartners] = useState([{
-    id: "...",
-    dni: "...",
-    name: "...",
-    last_name: "...",
-    email: "...",
-    state: "...",
-    language: "...",
-    province: "...",
-  },
-]);
-
+  const [filteredPartners, setFilteredPartners] = useState([
+    {
+      id: "...",
+      dni: "...",
+      name: "...",
+      last_name: "...",
+      email: "...",
+      state: "...",
+      language: "...",
+      province: "...",
+    },
+  ]);
 
   const onChange = (pagination, filters, sorter, extra) => {
     setFilteredPartners(extra.currentDataSource);
@@ -312,8 +318,12 @@ const Partners = () => {
         window.location.reload(true);
       })
       .catch((error) => {
-        setErrors(error.response.data["error"]);
-        console.log(errors);
+        console.log(error);
+        if (error.response.status === 409){
+          setErrors(error.response.data["error"]);
+        } else {
+          setErrors("Compruebe el que el archivo tenga el formato correcto, si el problema persiste contacte con el administrador.");
+        }
       });
     partners.get().then((response) => {
       setPartnersData(response.data);
@@ -339,12 +349,19 @@ const Partners = () => {
         <Button onClick={handleShow} id="boton-importar">
           Importar socios
         </Button>
-        <Button id="boton-importar" onClick={() => exportToExcel("myTable")}>
-          Exportar a Excel
-        </Button>
-        <Button id="boton-importar" onClick={() => notifyPartners()}>
-          Notificar socios seleccionados
-        </Button>
+        {partners_data.length > 0 && (
+          <>
+            <Button
+              id="boton-importar"
+              onClick={() => exportToExcel("myTable")}
+            >
+              Exportar a Excel
+            </Button>
+            <Button id="boton-importar" onClick={() => notifyPartners()}>
+              Notificar socios seleccionados
+            </Button>
+          </>
+        )}
       </div>
 
       <Modal show={show} onHide={handleClose}>
@@ -405,7 +422,9 @@ const Partners = () => {
 
       <MDBRow>
         <MDBCol md="2">
-        <Button onClick={clearFilters} id="boton-socio">Limpiar filtros</Button>
+          <Button onClick={clearFilters} id="boton-socio">
+            Limpiar filtros
+          </Button>
         </MDBCol>
       </MDBRow>
 

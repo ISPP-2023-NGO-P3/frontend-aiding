@@ -54,24 +54,55 @@ function CreateContact(){
         const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
         return regex.test(email);
     }
+
+    function validateName(valor) {
+      const regex = /^[a-zA-ZÀ-ÿ]+(([',. -][a-zA-ZÀ-ÿ ])?[a-zA-ZÀ-ÿ]*)*$/;
+      return regex.test(valor);
+    }
+
+    function validateTelefone(valor) {
+      const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
+      return regex.test(valor);
+    }
+
     function validateForm() {
         let error_msgs = {};
 
     if (name === "" || name === null) {
       error_msgs.name = "El nombre no puede estar vacío";
-    }
+    } else if (name.length < 1) {
+      error_msgs.name = "El nombre debe tener al menos 1 caracteres";
+    } else if (name.length > 50) {
+      error_msgs.name = "El nombre no puede tener más de 50 caracteres";
+    } else if (!validateName(name)) {
+      error_msgs.name = "El nombre no puede contener números ni caracteres especiales";
+    } 
+
     if (email === "" && phone === "") {
       error_msgs.email = "Ingrese un correo electrónico o un número de teléfono";
       error_msgs.phone = "Ingrese un correo electrónico o un número de teléfono";
     } else if (email !== "" && !validateEmail(email)) {
       error_msgs.email = "Este no es un email válido";
+    } else if (phone !== "" && !validateTelefone(phone)) {
+      error_msgs.phone = "Este no es un número de teléfono válido";
     }
+
     if (subject === "" || subject === null) {
       error_msgs.subject = "El asunto no puede estar vacío";
+    } else if (subject.length < 1) {
+      error_msgs.subject = "El asunto debe tener al menos 1 caracteres";
+    } else if (subject.length > 100) {
+      error_msgs.subject = "El asunto no puede tener más de 100 caracteres";
     }
+
     if (message === "" || message === null) {
       error_msgs.message = "El mensaje no puede estar vacío";
+    } else if (message.length < 1) {
+      error_msgs.message = "El mensaje debe tener al menos 1 caracteres";
+    } else if (message.length > 1000) {
+      error_msgs.message = "El mensaje no puede tener más de 1000 caracteres";
     }
+
     setErrors(error_msgs);
 
     if (Object.keys(error_msgs).length === 0) {

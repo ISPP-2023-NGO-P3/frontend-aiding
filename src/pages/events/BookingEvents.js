@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
+import { isAntispam } from "../../components/AntiSpam.js";
 
 const successMsg = {
   title: "Mensaje de confirmación",
@@ -51,9 +52,14 @@ function BookingEvents() {
   /* Validator */
   const [errors, setErrors] = useState({});
 
-  function validatePhone(phone) {
-    const patron = /^[0-9]{9}$/;
-    return patron.test(phone);
+  function validateName(valor) {
+    const regex = /^[a-zA-ZÀ-ÿ]+(([',. -][a-zA-ZÀ-ÿ ])?[a-zA-ZÀ-ÿ]*)*$/;
+    return regex.test(valor);
+  }
+
+  function validateTelefone(valor) {
+    const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
+    return regex.test(valor);
   }
 
   function validateForm() {
@@ -61,19 +67,26 @@ function BookingEvents() {
 
     if (name === "" || name === null) {
       error_msgs.name = "El nombre no puede estar vacío";
+    } else if (!validateName(name)) {
+      error_msgs.name = "El nombre no es válido";
+    } else if (!isAntispam(name)) {
+      error_msgs.name = "El nombre no puede contener palabras prohibidas";
     }
 
     if (last_name === "" || last_name === null) {
       error_msgs.last_name = "Debes de introducir un apellido";
+    } else if (!validateName(last_name)) {
+      error_msgs.last_name = "El apellido no es válido";
+    } else if (!isAntispam(last_name)) {
+      error_msgs.last_name = "El apellido no puede contener palabras prohibidas";
     }
 
     if (phone === "" || phone === null) {
       error_msgs.phone = "Debes de introducir un teléfono";
+    } else if (!validateTelefone(phone)) {
+      error_msgs.phone = "El teléfono no es válido";
     }
-
-    if (!validatePhone(phone)) {
-      error_msgs.phone = "El teléfono debe de tener 9 dígitos numéricos";
-    }
+    
     setErrors(error_msgs);
 
     if (Object.keys(error_msgs).length === 0) {

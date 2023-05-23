@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useState, useEffect } from "react";
-
+import { isAntispam } from "../../components/AntiSpam.js";
 
 const successMsg = {
   title: "Mensaje de confirmación",
@@ -94,6 +94,8 @@ function UpdateCommunication() {
       error_msgs.description = "La descripción no puede estar vacía";
     } else if (description.length > 255) {
       error_msgs.description = "La descripción debe tener menos de 255 caracteres";
+    } else if (!isAntispam(description)) {
+      error_msgs.description = "La descripción no puede contener palabras prohibidas";
     }
 
     setErrors(error_msgs);

@@ -98,7 +98,7 @@ const NavigationBar = ({
               </NavDropdown>
             )}
             {/** Dropdown menu for captain and supervisor*/}
-            {isAuthenticated && (role === 'capitán' || role === 'supervisor') && (
+            {isAuthenticated && (role === 'capitán' || role === 'supervisor' || role === 'admin') && (
               <NavDropdown
                 title="Menú para capitanes/supervisores"
                 id="basic-nav-dropdown"

@@ -4,6 +4,7 @@ import swal from "sweetalert";
 import resourcesApi from "./services/backend.js";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
+import { isAntispam } from "../../../components/AntiSpam.js";
 
 const successMsg = {
   title: "Mensaje de confirmación",
@@ -69,52 +70,107 @@ export default function UpdateResource() {
         navigate(`/admin/information/resources/${id}`);
       })
       .catch((error) => {
-        if (error.response) {
-         let error_msgs = {general: "No ha rellenado correctamente."};
-         setErrors(error_msgs);
-       }
-       swal(errorMsg);
+        if(error.response.status === 400) {
+          let error_msgs = {general: "La dirección es inválida"};
+          setErrors(error_msgs);
+        } else {
+            swal(errorMsg);
+        }
      });
   }
 
   /* Validator */
    const [errors, setErrors] = useState({});
 
-   function validateTLF(contact_phone) {
-     const tlfRegex = /^\d{9}$/;
-     if (!tlfRegex.test(contact_phone)) {
-       return false;
-     }
-     return true;
-   }
- 
-   function validateForm() {
+   function validateTelefone(valor) {
+    const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
+    return regex.test(valor);
+  }
+
+  function validateName(valor) {
+    const regex = /^[a-zA-ZÀ-ÿ]+(([',. -][a-zA-ZÀ-ÿ ])?[a-zA-ZÀ-ÿ]*)*$/;
+    return regex.test(valor);
+  }
+
+  function validateAddress(valor) {
+    const regex = /^[a-zA-Z0-9\s, 'À-ÿ\/-]*$/;
+    return regex.test(valor);
+  }
+
+  function validarCampoNumerico(valor) {
+    const regex = /^[0-9]*$/;
+    return regex.test(valor);
+  }
+  
+  function validateForm() {
      let error_msgs = {};
  
      if (title === "" || title === null) {
-       error_msgs.title = "El título no puede estar vacío";
-     }
+      error_msgs.title = "El título no puede estar vacío";
+    } else if (title.length > 100) {
+      error_msgs.title = "El título no puede tener más de 100 caracteres";
+    } else if (!validateName(title)) {
+      error_msgs.title = "El título no puede contener números ni caracteres especiales";
+    } else if (!isAntispam(title)) {
+      error_msgs.title = "El título no puede contener palabras prohibidas";
+    }
+  
+    if (description === "" || description === null) {
+      error_msgs.description = "La descripción no puede estar vacía";
+    } else if (description.length > 255) {
+      error_msgs.description = "La descripción no puede tener más de 255 caracteres";
+    } else if (!isAntispam(description)) {
+      error_msgs.description = "La descripción no puede contener palabras prohibidas";
+    }
+
+    if (street === "" || street === null) {
+      error_msgs.street = "La calle no puede estar vacía";
+    } else if (street.length > 255) {
+      error_msgs.street = "La calle no puede tener más de 255 caracteres";
+    } else if (!validateAddress(street)) {
+      error_msgs.street = "La calle no puede contener números ni caracteres especiales";
+    } else if (!isAntispam(street)) {
+      error_msgs.street = "La calle no puede contener palabras prohibidas";
+    }
+
+    if (contact_phone === "" || contact_phone === null) {
+      error_msgs.contact_phone = "El teléfono no puede estar vacío";
+    } else if (!validateTelefone(contact_phone)) {
+      error_msgs.contact_phone = "Este no es un teléfono válido";
+    }
+
+    if (number.length > 10) {
+      error_msgs.number = "El número no puede tener más de 10 caracteres";
+    } else if (!validarCampoNumerico(number)) {
+      error_msgs.number = "El número no puede contener letras ni caracteres especiales y no debe de ser negativo";
+    }
+
+    if (city === "" || city === null) {
+      error_msgs.city = "La ciudad no puede estar vacía";
+    } else if (city.length > 100) {
+      error_msgs.city = "La ciudad no puede tener más de 100 caracteres";
+    } else if (!validateName(city)) {
+      error_msgs.city = "La ciudad no puede contener números ni caracteres especiales";
+    } else if (!isAntispam(city)) {
+      error_msgs.city = "La ciudad no puede contener palabras prohibidas";
+    }
+
+    if (!(additional_comments === "" || additional_comments === null)) {
+      if (additional_comments > 255) {
+        error_msgs.additional_comments = "Los comentarios no pueden tener más de 255 caracteres";
+      } else if (!isAntispam(additional_comments)) {
+        error_msgs.additional_comments = "Los comentarios no pueden contener palabras prohibidas";
+      }
+    }
  
-     if (street === "" || street === null) {
-       error_msgs.street = "La calle no puede estar vacía";
-     }
- 
-     if (!validateTLF(contact_phone)) {
-       error_msgs.contact_phone = "Este no es un teléfono válido";
-     }
- 
-     if (city === "" || city === null) {
-       error_msgs.city = "La ciudad no puede estar vacía";
-     }
- 
-     setErrors(error_msgs);
- 
-     if (Object.keys(error_msgs).length === 0) {
-       return true;
-     } else {
-       return false;
-     }
-   }
+    setErrors(error_msgs);
+
+    if (Object.keys(error_msgs).length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   return (
     <div className="container my-5">
@@ -147,7 +203,9 @@ export default function UpdateResource() {
                   maxLength={255}
                 />
               </Form.Group>
-
+              {errors.description && (
+                  <p className="text-danger">{errors.description}</p>
+                )}
               <Form.Group className="mb-3">
                 <Form.Label>Teléfono</Form.Label>
                 <Form.Control
@@ -183,6 +241,9 @@ export default function UpdateResource() {
                   placeholder="Número de la calle"
                 />
               </Form.Group>
+                {errors.number && (
+                  <p className="text-danger">{errors.number}</p>
+                )}
 
               <Form.Group className="mb-3">
                 <Form.Label>Ciudad</Form.Label>
@@ -222,7 +283,7 @@ export default function UpdateResource() {
                 </Form.Select>
               </Form.Group>
             </div>
-
+            {errors.general && (<p className="text-danger">{errors.general}</p>)}
             <div className="row justify-content-evenly">
               <Button className="col mb-4 mx-2" variant="primary" type="submit">
                 Guardar recurso

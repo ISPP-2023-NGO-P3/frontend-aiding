@@ -194,6 +194,7 @@ export default function Details() {
   const sex = partnerFormatter(user.sex);
   const language = partnerFormatter(user.language);
   const periodicity = donationFormatter(donation.periodicity);
+  const donationExist = existDonation();
 
   return (
     <section>
@@ -433,7 +434,24 @@ export default function Details() {
           </MDBCol>
           <MDBCol lg="2">
             <MDBCard className="mb-4">
-              <MDBCardBody>
+              <MDBCardBody>   
+                <MDBRow>
+                  <MDBCol>
+                    <MDBCardText className="text-muted w-auto">
+                      <Button
+                        onClick={() => {navigate(`/admin/partners/update/${id}`)}}
+                        type="button" id="button" 
+                        className="btn btn-light w-100"
+                      >
+                        Editar socio
+                      </Button>
+                    </MDBCardText>
+                  </MDBCol>
+                </MDBRow>
+                <hr /> 
+                {donationExist && ( 
+                  
+                  <section>
                 <MDBRow>
                   <MDBCol>
                     <MDBCardText className="text-muted w-auto">
@@ -453,21 +471,9 @@ export default function Details() {
                     </MDBCardText>
                   </MDBCol>
                 </MDBRow>
-                <hr />    
-                <MDBRow>
-                  <MDBCol>
-                    <MDBCardText className="text-muted w-auto">
-                      <Button
-                        onClick={() => {navigate(`/admin/partners/update/${id}`)}}
-                        type="button" id="button" 
-                        className="btn btn-light w-100"
-                      >
-                        Editar socio
-                      </Button>
-                    </MDBCardText>
-                  </MDBCol>
-                </MDBRow>
                 <hr />
+                </section>
+              )}
                 <MDBRow>
                   <MDBCol>
                     <MDBCardText className="text-muted w-auto">

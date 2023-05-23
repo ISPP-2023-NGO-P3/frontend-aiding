@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
-
+import { isAntispam } from "../../components/AntiSpam.js";
 
 const successMsg = {
   title: "Mensaje de confirmación",
@@ -71,6 +71,8 @@ function CreateCommunication() {
         error_msgs.description = "La descripción no puede estar vacía";
       } else if (description.length > 255) {
         error_msgs.description = "La descripción debe tener menos de 255 caracteres";
+      } else if (!isAntispam(description)) {
+        error_msgs.description = "La descripción no puede contener palabras prohibidas";
       }
 
       setErrors(error_msgs);
@@ -84,14 +86,14 @@ function CreateCommunication() {
     const onSubmit = async (e) => {
       e.preventDefault();
       if (validateForm()) {
-        const formData = new FormData();
-        formData.append("date", date);
-        formData.append("communication_type", communication_type);
-        formData.append("description", description);
-        postCommunication(formData);
+        postCommunication(communication);
       }
     };
   
+    function handleClickReturn(){
+      navigate(`/admin/partners/${id}`);
+    }
+
     return (
       <div className="container my-5 shadow">
         <h1 className="pt-3">Crear comunicación</h1>
@@ -146,6 +148,9 @@ function CreateCommunication() {
           <div className="row justify-content-evenly">
             <Button className="col mb-4 mx-5" variant="outline-success" type="submit">
               Guardar comunicación
+            </Button>
+            <Button className="col mb-4 mx-2" variant="outline-danger" onClick={()=> handleClickReturn() }>
+              Cancelar
             </Button>
           </div>
         </Form>

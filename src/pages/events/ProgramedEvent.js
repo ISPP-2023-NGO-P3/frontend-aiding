@@ -10,16 +10,7 @@ function ProgramedEvent() {
   let navigate = useNavigate();
 
     /*DATOS*/
-  const [event_data, setEventData] = React.useState([
-    {
-    id: '...',
-    title: '...',
-    description: '...',
-    start_date: '...',
-    end_date: '...',
-    places: '...',
-    }
-  ]);
+  const [event_data, setEventData] = React.useState([]);
 
   /*CARGA DE DATOS*/
   useEffect(() => {
@@ -35,18 +26,18 @@ function ProgramedEvent() {
 
   return (
     <div className='container my-5'>
-      
       <h1 id="eventosTitulo">Eventos programados</h1>
-      <Row gutter={[24, 24]} justify="center" >
+      {event_data.length === 0 && <p>No hay eventos programados</p>}
+      <Row gutter={[24, 24]} justify="center">
         {event_data.map((data, index) => (
-          <Col span={8} key={index}>
+          <Col xs={24} sm={12} md={8} key={index}>
             <Card className="shadow" title={data.title} bordered={false} onClick={() => navigate(`/events/${data.id}`)}>
               {data.description}
               <br/>
               {formatDate(data.start_date)} - {formatDate(data.end_date)}
               <br/>
               Sitios: {data.places}
-              </Card>
+            </Card>
           </Col>
         ))}
       </Row>

@@ -1,14 +1,13 @@
 import React from "react";
 import {partners} from "./services/backend.js";
 import swal from 'sweetalert';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { useState } from "react";
 import IBAN from 'iban';
 import { parseISO, differenceInYears } from 'date-fns';
-
-
+import { isAntispam } from "../../components/AntiSpam.js";
 
 const successMsg = {
   title: "Mensaje de confirmación",
@@ -25,7 +24,6 @@ const errorMsg = {
   button: "Aceptar",
   timer: "5000",
 }
-
 
 function CreatePartner() {
     let navigate = useNavigate();
@@ -86,27 +84,22 @@ function CreatePartner() {
   }
 
   function validateText(valor) {
-    const regex = /^[a-zA-Z]*$/;
+    const regex = /^[a-zA-ZÀ-ÿ]*$/;
     return regex.test(valor);
   }
   
   function validateName(valor) {
-    const regex = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+    const regex = /^[a-zA-ZñÑáéíóúÁÉÍÓÚ]+(([',. -][a-zA-ZñÑáéíóúÁÉÍÓÚ ])?[a-zA-ZñÑáéíóúÁÉÍÓÚ]*)*$/;
     return regex.test(valor);
   }
 
   function validateTelefone(valor) {
-    const regex = /^(\+34|0034|34)?[ -]*(6|7)[ -]*([0-9][ -]*){8}$/;
+    const regex = /^(\+34|0034|34)?[ -]*(6|7|9)[ -]*([0-9][ -]*){8}$/;
     return regex.test(valor);
   }
 
-  function validateAdress(valor) {
-    const regex = /^[a-zA-Z0-9\s, '-]*$/;
-    return regex.test(valor);
-  }
-
-  function validateNumber(valor) {
-    const regex = /^[0-9]*$/;
+  function validateAddress(valor) {
+    const regex = /^[a-zA-Z0-9\s, 'À-ÿ\/-]*$/;
     return regex.test(valor);
   }
 
@@ -122,12 +115,16 @@ function CreatePartner() {
       error_msgs.name = "El nombre no puede estar vacío";
     } else if (!validateName(name)) {
       error_msgs.name = "El nombre no puede contener números o caracteres especiales";
+    } else if (!isAntispam(name)) {
+      error_msgs.name = "El nombre de usuario no puede contener palabras prohibidas";
     }
 
     if (last_name === "" || last_name === null) {
       error_msgs.last_name = "Los apellidos no pueden estar vacío";
     } else if (!validateName(last_name)) {
       error_msgs.last_name = "Los apellidos no pueden contener números o caracteres especiales";
+    } else if (!isAntispam(last_name)) {
+      error_msgs.last_name = "Los apellidos no pueden contener palabras prohibidas";
     }
 
     if (dni === "" || dni === null) {
@@ -154,8 +151,10 @@ function CreatePartner() {
 
     if (address === "" || address === null) {
       error_msgs.address = "La dirección no puede estar vacía";
-    } else if(!validateAdress(address)){
+    } else if(!validateAddress(address)){
       error_msgs.address = "La dirección no puede contener caracteres especiales";
+    } else if (!isAntispam(address)) {
+      error_msgs.address = "La dirección no puede contener palabras prohibidas";
     }
 
     if (postal_code === "" || postal_code === null) {
@@ -168,18 +167,24 @@ function CreatePartner() {
       error_msgs.township = "La ciudad no puede estar vacía";
     } else if (!validateText(township)) {
       error_msgs.township = "La ciudad no puede contener números o caracteres especiales";
+    } else if (!isAntispam(township)) {
+      error_msgs.township = "La ciudad no puede contener palabras prohibidas";
     }
 
     if (province === "" || province === null) {
       error_msgs.province = "La provincia no puede estar vacía";
     } else if (!validateText(province)) {
       error_msgs.province = "La provincia no puede contener números o caracteres especiales";
+    } else if (!isAntispam(province)) {
+      error_msgs.province = "La provincia no puede contener palabras prohibidas";
     }
     
     if (email === "" || email === null) {
       error_msgs.email = "El email no puede estar vacío";
     }else if (!validateEmail(email)) {
       error_msgs.email = "Este no es un email válido";
+    } else if (!isAntispam(email)) {
+      error_msgs.email = "El email no puede contener palabras prohibidas";
     }
 
     if (iban === "" || iban === null) {
@@ -192,6 +197,8 @@ function CreatePartner() {
       error_msgs.account_holder = "El titular de la cuenta no puede estar vacío";
     } else if (!validateName(account_holder)) {
       error_msgs.account_holder = "El titular de la cuenta no puede contener números o caracteres especiales";
+    } else if (!isAntispam(account_holder)) {
+      error_msgs.account_holder = "El titular de la cuenta no puede contener palabras prohibidas";
     }
 
     setErrors(error_msgs);
@@ -470,9 +477,15 @@ function CreatePartner() {
           </div>
           {errors.general && (<p className="text-danger">{errors.general}</p>)}
           <div className="row justify-content-evenly">
-            <Button className="col mb-4 mx-5" variant="outline-success" type="submit">
+            <Button className="col mb-4 mx-2" variant="outline-success" type="submit">
               Guardar socio
             </Button>
+            <Link
+              className="btn btn-outline-danger col mb-4 mx-2"
+              to="/admin/partners/"
+            >
+              Cancelar
+            </Link>
           </div>
         </Form>
       </div>

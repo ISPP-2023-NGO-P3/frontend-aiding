@@ -142,7 +142,7 @@ function ShowEvent() {
                       </MapContainer>}
                     </MDBRow>
 
-                    {isAuthenticated && (
+                    {isAuthenticated && moment(event_data.start_date).isAfter(new Date())&& (
                       <MDBRow>
                         <MDBCol>
                           <MDBCardText className="text-muted w-auto">
@@ -314,6 +314,28 @@ function ShowEvent() {
             </MDBCard>
           </MDBCol>
         </MDBRow>
+        <hr></hr>
+        {isAuthenticated && (
+        <Button
+          onClick={() => {
+            navigate(`/admin/events`);
+          }}
+          type="button"
+          className="btn btn-light w-100"
+        >
+          {" "}
+          Volver al listado
+        </Button>)}
+        {(isAuthenticated == false) && (
+          <Button
+            onClick={() => {
+              window.history.back();
+            }}
+            type="button"
+            className="btn btn-light w-100"
+          >
+            Volver al listado
+          </Button>)}
       </MDBContainer>
     </section>
   );

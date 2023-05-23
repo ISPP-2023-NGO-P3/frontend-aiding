@@ -6,76 +6,22 @@ import Highlighter from "react-highlight-words";
 import resourcesApi from "./services/backend.js";
 import { useNavigate } from "react-router-dom";
 
-/*DATOS DE LA TABLA*/
-
-/* var data2 = [
-  {
-    key: "1",
-    title: "tituloooo",
-    description: "descripcionnn",
-    street: "er Brown",
-    number: "4",
-    city: "pepi",
-    additionals_comments: "estomismo",
-  },
-  {
-    key: "2",
-    title: "tituloooo",
-    description: "descripcionnn",
-    street: "er Brown",
-    number: "4",
-    city: "pepi",
-    additionals_comments: "estomismo",
-  },
-  {
-    key: "3",
-    title: "tituloooo",
-    description: "descripcionnn",
-    street: "er Brown",
-    number: "4",
-    city: "pepi",
-    additionals_comments: "estomismo",
-  },
-  {
-    key: "4",
-    title: "tituloooo",
-    description: "descripcionnn",
-    street: "er Brown",
-    number: "4",
-    city: "pepi",
-    additionals_comments: "estomismo",
-  },
-  {
-    key: "5",
-    title: "tituloooo",
-    description: "descripcionnn",
-    street: "er Brown",
-    number: "4",
-    city: "pepi",
-    additionals_comments: "estomismo",
-  },
-  {
-    key: "6",
-    title: "tituloooo",
-    description: "descripcionnn",
-    street: "er Brown",
-    number: "4",
-    city: "pepi",
-    additionals_comments: "estomismo",
-  },
-  {
-    key: "7",
-    title: "tituloooo",
-    description: "descripcionnn",
-    street: "er Brown",
-    number: "4",
-    city: "pepi",
-    additionals_comments: "estomismo",
-  },
-]; */
-
 const ResourcesTable = () => {
   let navigate = useNavigate();
+
+  /*LIMPIEZA*/
+  const [filteredInfo, setFilteredInfo] = useState({});
+
+  const handleChange = (pagination, filters, sorter) => {
+    console.log('Various parameters', pagination, filters, sorter);
+    setFilteredInfo(filters);
+  };
+
+  const clearFilters = () => {
+    setFilteredInfo({});
+    setSearchText("");
+  };
+
   /*BUSCADOR*/
   const [searchText, setSearchText] = useState("");
   const [searchedColumn, setSearchedColumn] = useState("");
@@ -87,6 +33,7 @@ const ResourcesTable = () => {
   };
   const handleReset = (clearFilters) => {
     clearFilters();
+    setFilteredInfo({});
     setSearchText("");
   };
   const getColumnSearchProps = (dataIndex) => ({
@@ -105,7 +52,7 @@ const ResourcesTable = () => {
       >
         <Input
           ref={searchInput}
-          placeholder={`Search ${dataIndex}`}
+          placeholder={`Búsqueda`}
           value={selectedKeys[0]}
           onChange={(e) =>
             setSelectedKeys(e.target.value ? [e.target.value] : [])
@@ -117,10 +64,17 @@ const ResourcesTable = () => {
           }}
         />
         <Space>
-          <Button
+        <Button
             type="primary"
             onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
-            icon={<SearchOutlined />}
+            icon={
+              <SearchOutlined
+                style={{
+                  alignItems: "center",
+                  display: "inline-grid",
+                }}
+              />
+            }
             size="small"
             style={{
               width: 90,
@@ -157,7 +111,7 @@ const ResourcesTable = () => {
               close();
             }}
           >
-            close
+            Cerrar
           </Button>
         </Space>
       </div>
@@ -208,11 +162,13 @@ const ResourcesTable = () => {
     {
       title: "Título",
       dataIndex: "title",
+      filteredValue: filteredInfo.title || null,
       ...getColumnSearchProps("title"),
     },
     {
       title: "Descripción",
       dataIndex: "description",
+      filteredValue: filteredInfo.description || null,
       ...getColumnSearchProps("description"),
     },
     {
@@ -234,17 +190,7 @@ const ResourcesTable = () => {
   ];
 
   /*DATOS*/
-  const [resources_data, setResourceData] = React.useState([
-    {
-      id: "...",
-      title: "...",
-      description: "...",
-      street: "...",
-      number: "...",
-      city: "...",
-      additional_comments: "...",
-    },
-  ]);
+  const [resources_data, setResourceData] = React.useState([]);
 
   useEffect(() => {
     resourcesApi.get().then((response) => {
@@ -263,6 +209,9 @@ const ResourcesTable = () => {
       >
         Crear recurso
       </Button>
+      <Button onClick={clearFilters} id="boton-socio">
+        Limpiar filtros
+      </Button>
       <Table
         onRow={(record, rowIndex) => {
           return {
@@ -273,7 +222,7 @@ const ResourcesTable = () => {
         }}
         columns={columns}
         dataSource={resources_data}
-        onChange={onChange}
+        onChange={onChange && handleChange}
         scroll={{ y: 800 }}
         pagination={{ pageSize: 4 }}
       />

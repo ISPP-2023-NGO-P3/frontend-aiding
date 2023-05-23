@@ -77,7 +77,16 @@ function AdminCreateNotification() {
     }
     if (message === "" || message === null) {
       error_msgs.message = "El mensaje no puede estar vacío";
+    } else if (message.length > 250) {
+      error_msgs.message = "El mensaje no puede tener más de 250 caracteres";
     }
+
+    if (subject === "" || subject === null) {
+      error_msgs.subject = "El asunto no puede estar vacío";
+    } else if (subject.length > 100) {
+      error_msgs.subject = "El asunto no puede tener más de 100 caracteres";
+    }
+    
     setErrors(error_msgs);
 
     return Object.keys(error_msgs).length === 0;
@@ -148,7 +157,7 @@ function AdminCreateNotification() {
                   name="subject"
                   placeholder="Asunto"
                 />
-                {errors.name && <p className="text-danger">{errors.name}</p>}
+                {errors.subject && <p className="text-danger">{errors.subject}</p>}
               </Form.Group>
 
               <Form.Group className="mb-3">
